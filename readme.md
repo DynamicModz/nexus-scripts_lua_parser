@@ -108,7 +108,7 @@ nexusscripts@nexusscripts-7200-6744D:~/Desktop/Lua/src$ lua cli.lua help
 |_| \_|\___/_/\_\\__,_|___/____/ \___|_|  |_| .__/ \__|___/
                                             |_|           
 
-                                              --== NexusScripts Lua Parser v1.0 ==--                                                         
+--== NexusScripts Lua Parser v1.0 ==--                                                         
 
 Available commands:
   parse - Parse a Lua file and generate AST
