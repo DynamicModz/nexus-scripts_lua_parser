@@ -28,7 +28,7 @@ local OP_TO_METAMETHOD = {
     ["<="] = "__le",
     
     ["[]"] = "__index",
-    ["[]="]=  "__newindex",
+    ["[]="] = "__newindex",
     ["call"] = "__call",
     
     [".."] = "__concat",
@@ -44,33 +44,61 @@ local OP_TO_METAMETHOD = {
 
 local ast_nodes = {}
 
-function ast_nodes.Chunk(body, comments)
-    return { 
+local function with_location(node, token_start, token_end)
+    if token_start then
+        node.loc = {
+            start = {
+                line = token_start.line,
+                col = token_start.col
+            },
+            ["end"] = {
+                line = (token_end and token_end.line) or token_start.line,
+                col = (token_end and token_end.col) or token_start.col
+            }
+        }
+    end
+    return node
+end
+
+function ast_nodes.Chunk(body, comments, token_start, token_end)
+    return with_location({ 
         type = "Chunk", 
         body = body or {}, 
         comments = comments or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.LocalStatement(variables, init)
-    return { 
+function ast_nodes.LocalStatement(variables, init, token_start, token_end)
+    for _, variable in ipairs(variables or {}) do
+        if variable.type == "Identifier" and variable.attributes and 
+          (variable.attributes.const or variable.attributes.close) then
+            return with_location({ 
+                type = "LocalStatement", 
+                variables = variables or {}, 
+                init = init or {},
+                has_attributed_variables = true
+            }, token_start, token_end)
+        end
+    end
+    
+    return with_location({ 
         type = "LocalStatement", 
         variables = variables or {}, 
         init = init or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.FunctionDeclaration(identifier, parameters, body, isLocal)
-    return { 
+function ast_nodes.FunctionDeclaration(identifier, parameters, body, isLocal, token_start, token_end)
+    return with_location({ 
         type = "FunctionDeclaration", 
         identifier = identifier, 
         parameters = parameters or {}, 
         body = body or {}, 
         isLocal = isLocal or false 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.AssignmentStatement(variables, init)
+function ast_nodes.AssignmentStatement(variables, init, token_start, token_end)
     local metamethod_ops = {}
     
     for i, var in ipairs(variables or {}) do
@@ -86,116 +114,117 @@ function ast_nodes.AssignmentStatement(variables, init)
         end
     end
     
-    return {
+    return with_location({
         type = "AssignmentStatement",
         variables = variables,
         init = init,
         metamethod_ops = metamethod_ops,
         has_metamethods = #metamethod_ops > 0
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.CallStatement(expression)
-    return { 
+function ast_nodes.CallStatement(expression, token_start, token_end)
+    return with_location({ 
         type = "CallStatement", 
         expression = expression 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.DoStatement(body)
-    return { 
+function ast_nodes.DoStatement(body, token_start, token_end)
+    return with_location({ 
         type = "DoStatement", 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.WhileStatement(condition, body)
-    return { 
+function ast_nodes.WhileStatement(condition, body, token_start, token_end)
+    return with_location({ 
         type = "WhileStatement", 
         condition = condition, 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.RepeatStatement(condition, body)
-    return { 
+function ast_nodes.RepeatStatement(condition, body, token_start, token_end)
+    return with_location({ 
         type = "RepeatStatement", 
         condition = condition, 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.IfStatement(clauses)
-    return { 
+function ast_nodes.IfStatement(clauses, token_start, token_end)
+    return with_location({ 
         type = "IfStatement", 
         clauses = clauses or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.IfClause(condition, body)
-    return { 
+function ast_nodes.IfClause(condition, body, token_start, token_end)
+    return with_location({ 
         type = "IfClause", 
         condition = condition, 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.ElseClause(body)
-    return { 
+function ast_nodes.ElseClause(body, token_start, token_end)
+    return with_location({ 
         type = "ElseClause", 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.ForNumericStatement(variable, start, stop, step, body)
-    return { 
+function ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end)
+    return with_location({ 
         type = "ForNumericStatement", 
         variable = variable, 
         start = start, 
         stop = stop, 
         step = step, 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.ForGenericStatement(variables, iterators, body)
-    return { 
+function ast_nodes.ForGenericStatement(variables, iterators, body, token_start, token_end)
+    return with_location({ 
         type = "ForGenericStatement", 
         variables = variables or {}, 
         iterators = iterators or {}, 
         body = body or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.BreakStatement()
-    return { 
+function ast_nodes.BreakStatement(token_start, token_end)
+    return with_location({ 
         type = "BreakStatement" 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.ReturnStatement(arguments)
-    return { 
+function ast_nodes.ReturnStatement(arguments, token_start, token_end)
+    return with_location({ 
         type = "ReturnStatement", 
         arguments = arguments or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.LiteralExpression(value, raw)
-    return { 
+function ast_nodes.LiteralExpression(value, raw, token_start, token_end)
+    return with_location({ 
         type = "LiteralExpression", 
         value = value, 
         raw = raw 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.Identifier(name)
-    return { 
+function ast_nodes.Identifier(name, attributes, token_start, token_end)
+    return with_location({ 
         type = "Identifier", 
-        name = name 
-    }
+        name = name,
+        attributes = attributes or {}
+    }, token_start, token_end)
 end
 
-function ast_nodes.UnaryExpression(operator, argument)
+function ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
     local metamethod
     if operator == "~" then
         metamethod = OP_TO_METAMETHOD["~unary"]
@@ -207,16 +236,16 @@ function ast_nodes.UnaryExpression(operator, argument)
         metamethod = nil
     end
     
-    return { 
+    return with_location({ 
         type = "UnaryExpression", 
         operator = operator, 
         argument = argument,
         potential_metamethod = metamethod,
         has_metamethod = metamethod ~= nil
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.BinaryExpression(operator, left, right)
+function ast_nodes.BinaryExpression(operator, left, right, token_start, token_end)
     local metamethod = OP_TO_METAMETHOD[operator]
     
     local substituted_operator = operator
@@ -237,7 +266,7 @@ function ast_nodes.BinaryExpression(operator, left, right)
         negate_result = true
     end
     
-    return {
+    return with_location({
         type = "BinaryExpression",
         operator = operator,
         substituted_operator = substituted_operator,
@@ -249,10 +278,10 @@ function ast_nodes.BinaryExpression(operator, left, right)
         has_metamethod = metamethod ~= nil,
         swap_operands = swap_operands,
         negate_result = negate_result
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.TableConstructorExpression(fields)
+function ast_nodes.TableConstructorExpression(fields, token_start, token_end)
     local metamethods = {}
     local has_metamethods = false
     
@@ -276,153 +305,246 @@ function ast_nodes.TableConstructorExpression(fields)
         end
     end
     
-    return {
+    return with_location({
         type = "TableConstructorExpression",
         fields = fields or {},
         has_metamethods = has_metamethods,
         metamethods = metamethods
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.TableKeyString(key, value)
-    return { 
+function ast_nodes.TableKeyString(key, value, token_start, token_end)
+    return with_location({ 
         type = "TableKeyString", 
         key = key, 
         value = value 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.TableKey(key, value)
-    return { 
+function ast_nodes.TableKey(key, value, token_start, token_end)
+    return with_location({ 
         type = "TableKey", 
         key = key, 
         value = value 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.TableValue(value)
-    return { 
+function ast_nodes.TableValue(value, token_start, token_end)
+    return with_location({ 
         type = "TableValue", 
         value = value 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.CallExpression(base, arguments)
+function ast_nodes.CallExpression(base, arguments, token_start, token_end)
     local is_method_call = base.type == "MemberExpression"
     
-    return {
+    return with_location({
         type = "CallExpression",
         base = base,
         arguments = arguments or {},
         is_method_call = is_method_call,
         potential_metamethod = OP_TO_METAMETHOD["call"],
         has_metamethod = true  
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.MethodCallExpression(base, method, arguments)
-    return { 
+function ast_nodes.MethodCallExpression(base, method, arguments, token_start, token_end)
+    return with_location({ 
         type = "MethodCallExpression", 
         base = base, 
         method = method, 
         arguments = arguments or {} 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.MemberExpression(base, indexer, identifier)
-    return { 
+function ast_nodes.MemberExpression(base, indexer, identifier, token_start, token_end)
+    return with_location({ 
         type = "MemberExpression", 
         base = base, 
         indexer = indexer,
         identifier = identifier 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.IndexExpression(base, index)
-    return {
+function ast_nodes.IndexExpression(base, index, token_start, token_end)
+    return with_location({
         type = "IndexExpression",
         base = base,
         index = index,
         potential_metamethod = OP_TO_METAMETHOD["[]"],
         has_metamethod = true,
         is_assignment_target = false 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.FunctionExpression(parameters, body, isLocal)
-    return { 
+function ast_nodes.FunctionExpression(parameters, body, isLocal, token_start, token_end)
+    return with_location({ 
         type = "FunctionExpression", 
         parameters = parameters or {},
         body = body or {},
         isLocal = isLocal or false 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.NumericLiteral(value, raw)
-    return { 
+function ast_nodes.NumericLiteral(value, raw, token_start, token_end)
+    return with_location({ 
         type = "NumericLiteral", 
         value = value, 
         raw = raw 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.BooleanLiteral(value)
-    return { 
+function ast_nodes.BooleanLiteral(value, token_start, token_end)
+    return with_location({ 
         type = "BooleanLiteral", 
         value = value 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.NilLiteral()
-    return { 
+function ast_nodes.NilLiteral(token_start, token_end)
+    return with_location({ 
         type = "NilLiteral" 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.StringLiteral(value, raw)
-    return {
+function ast_nodes.StringLiteral(value, raw, token_start, token_end)
+    return with_location({
         type = "StringLiteral",
         value = value,
         raw = raw
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.Comment(value, isMultiline)
-    return { 
+function ast_nodes.Comment(value, isMultiline, token_start, token_end)
+    return with_location({ 
         type = "Comment", 
         value = value, 
         isMultiline = isMultiline or false 
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.createErrorNode(message, token, nodeType)
-    return {
+function ast_nodes.createErrorNode(message, token, nodeType, token_start, token_end)
+    return with_location({
         type = nodeType or "ErrorNode",
         message = message,
         line = token and token.line or 0,
         col = token and token.col or 0,
         isError = true
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.GotoStatement(label)
+function ast_nodes.GotoStatement(label, token_start, token_end)
     if not label then
-        return ast_nodes.createErrorNode("Missing label in goto statement", nil, "GotoStatement")
+        return ast_nodes.createErrorNode("Missing label in goto statement", nil, "GotoStatement", token_start, token_end)
     end
-    return {
+    return with_location({
         type = "GotoStatement",
         label = label
-    }
+    }, token_start, token_end)
 end
 
-function ast_nodes.LabelStatement(label)
+function ast_nodes.LabelStatement(label, token_start, token_end)
     if not label then
-        return ast_nodes.createErrorNode("Missing name in label statement", nil, "LabelStatement")
+        return ast_nodes.createErrorNode("Missing name in label statement", nil, "LabelStatement", token_start, token_end)
     end
-    return {
+    return with_location({
         type = "LabelStatement",
         label = label
-    }
+    }, token_start, token_end)
+end
+
+ast_nodes.create_visitor = function()
+    local visitor = {}
+    
+    function visitor:visit(node)
+        if not node then return nil end
+        
+        local method_name = "visit_" .. node.type
+        if self[method_name] then
+            return self[method_name](self, node)
+        else
+            return self:default_visit(node)
+        end
+    end
+    
+    function visitor:default_visit(node)
+        if not node then return nil end
+        
+        local result = {}
+        
+        if node.type == "Chunk" or 
+           node.type == "LocalStatement" or 
+           node.type == "DoStatement" or 
+           node.type == "WhileStatement" or 
+           node.type == "RepeatStatement" or 
+           node.type == "IfStatement" or
+           node.type == "ForNumericStatement" or
+           node.type == "ForGenericStatement" then
+            if node.body then
+                for i, stmt in ipairs(node.body) do
+                    local res = self:visit(stmt)
+                    if res ~= nil then
+                        result[i] = res
+                    end
+                end
+            end
+        elseif node.type == "FunctionDeclaration" or
+               node.type == "FunctionExpression" then
+            for i, param in ipairs(node.parameters or {}) do
+                local res = self:visit(param)
+                if res ~= nil then
+                    result["param_" .. i] = res
+                end
+            end
+            
+            for i, stmt in ipairs(node.body or {}) do
+                local res = self:visit(stmt)
+                if res ~= nil then
+                    result["body_" .. i] = res
+                end
+            end
+        elseif node.type == "CallExpression" or
+               node.type == "MethodCallExpression" then
+            local base_res = self:visit(node.base)
+            if base_res ~= nil then
+                result.base = base_res
+            end
+            
+            for i, arg in ipairs(node.arguments or {}) do
+                local res = self:visit(arg)
+                if res ~= nil then
+                    result["arg_" .. i] = res
+                end
+            end
+        elseif node.type == "TableConstructorExpression" then
+            for i, field in ipairs(node.fields or {}) do
+                local res = self:visit(field)
+                if res ~= nil then
+                    result["field_" .. i] = res
+                end
+            end
+        elseif node.type == "BinaryExpression" then
+            local left_res = self:visit(node.left)
+            if left_res ~= nil then
+                result.left = left_res
+            end
+            
+            local right_res = self:visit(node.right)
+            if right_res ~= nil then
+                result.right = right_res
+            end
+        elseif node.type == "UnaryExpression" then
+            local arg_res = self:visit(node.argument)
+            if arg_res ~= nil then
+                result.argument = arg_res
+            end
+        end
+        
+        return #result > 0 and result or nil
+    end
+    
+    return visitor
 end
 
 return ast_nodes

@@ -22,15 +22,19 @@ local function add_error(message, token)
     table.insert(errors, {
         message = message,
         line = line,
-        col = col
+        col = col,
+        token = token
     })
+    
+    return ast_nodes.createErrorNode(message, token)
 end
 
 local function recover_from_error(expected_token_type, recovery_strategy)
     recovery_strategy = recovery_strategy or "skip_to_statement"
     
-    add_error("Unexpected token '" .. (current_token and current_token.value or "EOF") .. 
-              "', expected " .. expected_token_type, current_token)
+    local error_msg = "Unexpected token '" .. (current_token and current_token.value or "EOF") .. 
+                      "', expected " .. expected_token_type
+    add_error(error_msg, current_token)
     
     if recovery_strategy == "skip_to_statement" then
         while current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF and
@@ -46,7 +50,12 @@ local function recover_from_error(expected_token_type, recovery_strategy)
                    current_token.value == "repeat" or
                    current_token.value == "goto")) and
               not current_token.type == lexer.TOKEN_TYPES.IDENTIFIER and
-              not current_token.type == lexer.TOKEN_TYPES.DOUBLE_COLON do
+              not current_token.type == lexer.TOKEN_TYPES.DOUBLE_COLON and
+              not current_token.type == lexer.TOKEN_TYPES.SEMI do
+            next_token()
+        end
+        
+        while current_token and current_token.type == lexer.TOKEN_TYPES.SEMI do
             next_token()
         end
     elseif recovery_strategy == "skip_to_block_end" then
@@ -76,6 +85,28 @@ local function recover_from_error(expected_token_type, recovery_strategy)
             next_token()
         end
         if current_token and current_token.type == lexer.TOKEN_TYPES.SEMI then
+            next_token()
+        end
+    elseif recovery_strategy == "panic_mode" then
+        local sync_points = {
+            [lexer.TOKEN_TYPES.SEMI] = true,
+            [lexer.TOKEN_TYPES.RBRACE] = true,
+            [lexer.TOKEN_TYPES.RPAREN] = true
+        }
+        
+        local keyword_sync = {
+            ["end"] = true,
+            ["else"] = true,
+            ["elseif"] = true,
+            ["until"] = true,
+            ["then"] = true
+        }
+        
+        while current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF do
+            if sync_points[current_token.type] or 
+               (current_token.type == lexer.TOKEN_TYPES.KEYWORD and keyword_sync[current_token.value]) then
+                break
+            end
             next_token()
         end
     elseif recovery_strategy == "insert_missing" then
@@ -124,11 +155,60 @@ end
 
 local parse_expression, parse_statement
 
+local function synchronize()
+    while current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF do
+        if current_token.type == lexer.TOKEN_TYPES.SEMI or
+           current_token.type == lexer.TOKEN_TYPES.RBRACE or
+           (current_token.type == lexer.TOKEN_TYPES.KEYWORD and 
+            (current_token.value == "function" or
+             current_token.value == "local" or
+             current_token.value == "if" or
+             current_token.value == "return" or
+             current_token.value == "while" or
+             current_token.value == "for" or
+             current_token.value == "repeat" or
+             current_token.value == "end")) then
+            if current_token.type == lexer.TOKEN_TYPES.SEMI then
+                next_token()
+            end
+            break
+        end
+        next_token()
+    end
+end
+
 local function parse_identifier()
     if match(lexer.TOKEN_TYPES.IDENTIFIER) then
         local token = current_token
         next_token()
-        return ast_nodes.Identifier(token.value)
+        
+        local attributes = {}
+        local token_start = token
+        local token_end = token
+        
+        if match(lexer.TOKEN_TYPES.LT_SYMBOL) then
+            local lt_token = current_token
+            consume(lexer.TOKEN_TYPES.LT_SYMBOL)
+            
+            if match(lexer.TOKEN_TYPES.ATTR_CONST) then
+                attributes.const = true
+                consume(lexer.TOKEN_TYPES.ATTR_CONST)
+            elseif match(lexer.TOKEN_TYPES.ATTR_CLOSE) then
+                attributes.close = true
+                consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
+            else
+                add_error("Expected 'const' or 'close' after '<'", current_token)
+            end
+            
+            if match(lexer.TOKEN_TYPES.GT_SYMBOL) then
+                token_end = current_token
+                consume(lexer.TOKEN_TYPES.GT_SYMBOL)
+            else
+                add_error("Expected '>' to close attribute", current_token)
+            end
+        end
+        
+        return ast_nodes.Identifier(token.value, attributes, token_start, token_end)
     end
     return nil
 end
@@ -538,6 +618,7 @@ end
 
 local function parse_block()
     local statements = {}
+    local had_error = false
     
     while not match(lexer.TOKEN_TYPES.EOF) and
           not (match(lexer.TOKEN_TYPES.KEYWORD) and 
@@ -548,10 +629,17 @@ local function parse_block()
         
         local stmt = parse_statement()
         if stmt then
-            table.insert(statements, stmt)
+            if stmt.isError then
+                had_error = true
+                synchronize()
+            else
+                table.insert(statements, stmt)
+            end
         else
             if current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF then
-                next_token()
+                had_error = true
+                add_error("Unexpected token in block", current_token)
+                synchronize()
             else
                 break
             end
@@ -1000,10 +1088,10 @@ local function parse_local_statement()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function" then
-
         current_token_idx = current_token_idx - 1 
         current_token = tokens[current_token_idx]
         return parse_local_function_declaration()
@@ -1012,12 +1100,27 @@ local function parse_local_statement()
     local variables = parse_variable_list()
     local init = {}
     
+    local has_attributes = false
+    for _, var in ipairs(variables) do
+        if var.attributes and (var.attributes.const or var.attributes.close) then
+            has_attributes = true
+            break
+        end
+    end
+    
     if match(lexer.TOKEN_TYPES.ASSIGN) then
         consume(lexer.TOKEN_TYPES.ASSIGN)
         init = parse_expression_list()
+    elseif has_attributes then
+        for _, var in ipairs(variables) do
+            if var.attributes and var.attributes.const then
+                add_error("<const> variables must be initialized", current_token)
+                break
+            end
+        end
     end
     
-    return ast_nodes.LocalStatement(variables, init)
+    return ast_nodes.LocalStatement(variables, init, token_start, current_token)
 end
 
 local function parse_return_statement()

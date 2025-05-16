@@ -47,6 +47,10 @@ lexer.TOKEN_TYPES = {
     DOUBLE_COLON = "DOUBLE_COLON",
     DOT = "DOT",
     VARARG = "VARARG",
+    ATTR_CONST = "ATTR_CONST",
+    ATTR_CLOSE = "ATTR_CLOSE",
+    LT_SYMBOL = "LT_SYMBOL",
+    GT_SYMBOL = "GT_SYMBOL",
     EOF = "EOF"
 }
 
@@ -305,17 +309,31 @@ local function read_number(code, pos, line, col)
     local start = pos
     local col_start = col
     
-    if pos + 1 <= #code and code:sub(pos, pos + 1) == "0x" or code:sub(pos, pos + 1) == "0X" then
+    if pos + 1 <= #code and (code:sub(pos, pos + 1) == "0x" or code:sub(pos, pos + 1) == "0X" or 
+                             code:sub(pos, pos + 1) == "0b" or code:sub(pos, pos + 1) == "0B") then
+        local is_binary = code:sub(pos + 1, pos + 1):lower() == "b"
         pos = pos + 2
         col = col + 2
         
-        while pos <= #code do
-            local c = code:sub(pos, pos)
-            if (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F') then
-                pos = pos + 1
-                col = col + 1
-            else
-                break
+        if is_binary then
+            while pos <= #code do
+                local c = code:sub(pos, pos)
+                if c == '0' or c == '1' then
+                    pos = pos + 1
+                    col = col + 1
+                else
+                    break
+                end
+            end
+        else
+            while pos <= #code do
+                local c = code:sub(pos, pos)
+                if (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F') then
+                    pos = pos + 1
+                    col = col + 1
+                else
+                    break
+                end
             end
         end
     else
@@ -338,9 +356,9 @@ local function read_number(code, pos, line, col)
             pos = pos + 1
             col = col + 1
             
-            if pos <= #code and (code:sub(pos, pos) == '+' or code:sub(pos, pos) == '-') then
-                pos = pos + 1
-                col = col + 1
+            if pos <= #code and (code:sub(pos + 1, pos + 1) == '+' or code:sub(pos + 1, pos + 1) == '-') then
+                pos = pos + 2
+                col = col + 2
             end
             
             while pos <= #code and code:sub(pos, pos) >= '0' and code:sub(pos, pos) <= '9' do
@@ -489,6 +507,10 @@ local function read_long_string(code, pos, line, col, equals_count)
     return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.STRING, str, line - newlines, col_start, raw)
 end
 
+local function add_error(message, line, col)
+    print("LEXER ERROR: " .. message .. " at line " .. line .. ", col " .. col)
+end
+
 function lexer.tokenize(code)
     local pos = 1
     local line = 1
@@ -537,7 +559,13 @@ function lexer.tokenize(code)
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.KEYWORD, id, line, col_start, id))
                 end
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDENTIFIER, id, line, col_start, id))
+                if id == "const" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CONST, id, line, col_start, id))
+                elseif id == "close" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CLOSE, id, line, col_start, id))
+                else
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDENTIFIER, id, line, col_start, id))
+                end
             end
             
             goto continue
@@ -549,23 +577,44 @@ function lexer.tokenize(code)
             local has_decimal = false
             local has_exponent = false
             local is_hex = false
+            local is_binary = false
             
-            if c == "0" and pos + 1 <= #code and code:sub(pos + 1, pos + 1):lower() == "x" then
-                is_hex = true
-                pos = pos + 2
-                col = col + 2
-                
-                if pos > #code or not code:sub(pos, pos):match("[%da-fA-F]") then
-                    add_error("Malformed hexadecimal number", line, col)
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
-                    goto continue
+            if c == "0" and pos + 1 <= #code then
+                local next_char = code:sub(pos + 1, pos + 1)
+                if next_char:lower() == "x" then
+                    is_hex = true
+                    pos = pos + 2
+                    col = col + 2
+                    
+                    if pos > #code or not code:sub(pos, pos):match("[%da-fA-F]") then
+                        add_error("Malformed hexadecimal number", line, col)
+                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
+                        goto continue
+                    end
+                    
+                    while pos <= #code and code:sub(pos, pos):match("[%da-fA-F]") do
+                        pos = pos + 1
+                        col = col + 1
+                    end
+                elseif next_char:lower() == "b" then
+                    is_binary = true
+                    pos = pos + 2
+                    col = col + 2
+                    
+                    if pos > #code or not code:sub(pos, pos):match("[01]") then
+                        add_error("Malformed binary number", line, col)
+                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
+                        goto continue
+                    end
+                    
+                    while pos <= #code and code:sub(pos, pos):match("[01]") do
+                        pos = pos + 1
+                        col = col + 1
+                    end
                 end
-                
-                while pos <= #code and code:sub(pos, pos):match("[%da-fA-F]") do
-                    pos = pos + 1
-                    col = col + 1
-                end
-            else
+            end
+            
+            if not is_hex and not is_binary then
                 if c == "." then
                     has_decimal = true
                 end
@@ -815,7 +864,7 @@ function lexer.tokenize(code)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT, "<", line, col, "<"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT_SYMBOL, "<", line, col, "<"))
                 pos = pos + 1
                 col = col + 1
             end
@@ -829,7 +878,7 @@ function lexer.tokenize(code)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT, ">", line, col, ">"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT_SYMBOL, ">", line, col, ">"))
                 pos = pos + 1
                 col = col + 1
             end
