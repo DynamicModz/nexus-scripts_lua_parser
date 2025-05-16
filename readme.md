@@ -93,10 +93,10 @@ The NexusScripts Parser Module will include a command-line interface (CLI) tool 
 
 ## Current CLI Tool Capabilities
 
-The parser module already includes a working CLI tool that demonstrates its capabilities:
+The parser module includes a working CLI tool with the following capabilities:
 
 ```
-nexusscripts@nexusscripts-7200-6744D:~/Desktop/Lua/src$ lua cli.lua parse simple_script.lua ast_output.lua --format=lua --verbose
+nexusscripts@nexusscripts-7200-6744D:~/Desktop/Lua/src$ lua cli.lua help
 
  _   _                     ____            _       _       
 | \ | | _____  ___   _ ___/ ___|  ___ _ __(_)_ __ | |_ ___ 
@@ -107,66 +107,55 @@ nexusscripts@nexusscripts-7200-6744D:~/Desktop/Lua/src$ lua cli.lua parse simple
 
         --== NexusScripts Lua Parser v1.0 ==--                                                         
 
-VERBOSE: Reading input file: simple_script.lua
-VERBOSE: File content length: 453 bytes
-VERBOSE: Parsing Lua code...
-VERBOSE: Input code:
-VERBOSE:   1: local name = "User"
-VERBOSE:   2: local age = 25
-VERBOSE:   3: local price = 19.99
-VERBOSE:   4: local is_active = true
-VERBOSE:   5: print("Hello, welcome to Lua!")
-VERBOSE:   6: print("Name: " .. name)
-VERBOSE:   7: print("Age: " .. age)
-VERBOSE:   8: print("Price: $" .. price)
-VERBOSE:   9: if is_active then
-VERBOSE:   10:     print("Status: Active")
-VERBOSE:   11: else
-VERBOSE:   12:     print("Status: Inactive")
-VERBOSE:   13: end
-VERBOSE:   14: local tax_rate = 0.08
-VERBOSE:   15: local total_price = price + (price * tax_rate)
-VERBOSE:   16: print("Total price with tax: $" .. total_price)
-VERBOSE:   17: local greeting = "Have a " .. "nice " .. "day!"
-VERBOSE:   18: print(greeting)
-VERBOSE: Tokens:
-VERBOSE:   Count: 84
-VERBOSE:   1: KEYWORD [local]
-VERBOSE:   2: IDENTIFIER [name]
-VERBOSE:   3: ASSIGN [=]
-VERBOSE:   4: STRING [User]
-VERBOSE:   5: KEYWORD [local]
-VERBOSE:   ... and more
+Available commands:
+  parse - Parse a Lua file and generate AST
+      Usage: parse <input_file> [output_file] [--format=json|lua] [--output=ast|tokens|both]
+  help - Show help information
+      Usage: help [command]
+  version - Show version information
+      Usage: version
 
-VERBOSE: No syntax errors found
-VERBOSE: AST structure:
-VERBOSE:   Number of statements: 14
-VERBOSE:   Statement 1 type: LocalStatement
-VERBOSE:   Statement 2 type: LocalStatement
-VERBOSE:   Statement 3 type: LocalStatement
-VERBOSE:   Statement 4 type: LocalStatement
-VERBOSE:   Statement 5 type: CallStatement
-VERBOSE:   Statement 6 type: CallStatement
-VERBOSE:   Statement 7 type: CallStatement
-VERBOSE:   Statement 8 type: CallStatement
-VERBOSE:   Statement 9 type: IfStatement
-VERBOSE:   Statement 10 type: LocalStatement
-VERBOSE:   Statement 11 type: LocalStatement
-VERBOSE:   Statement 12 type: CallStatement
-VERBOSE:   Statement 13 type: LocalStatement
-VERBOSE:   Statement 14 type: CallStatement
-VERBOSE: Generating LUA output...
-VERBOSE: Writing to output file: ast_output.lua
-SUCCESS: AST generated successfully and saved to: ast_output.lua
+Examples:
+  ./NexusScripts parse input.lua                        # Parse and output to input.lua.output.lua
+  ./NexusScripts parse input.lua output.json --format=json    # Parse and output JSON
+  ./NexusScripts parse input.lua --output=tokens              # Output only tokens
+  ./NexusScripts parse input.lua --output=both               # Output both AST and tokens
+  ./NexusScripts parse input.lua output.lua --verbose         # Enable verbose output
 ```
 
 The CLI tool can:
-- Parse Lua source files
-- Tokenize and display detailed token information
-- Generate and analyze AST structure
-- Output the AST in various formats
+- Parse Lua source files and generate their Abstract Syntax Tree (AST)
+- Output tokenization information (lexical analysis)
+- Generate output in either Lua table or JSON format
+- Output AST only, tokens only, or both in a single command
+- Create default output files (input_file.output.lua) when no output file is specified
+- Use Lua format by default instead of JSON
 - Provide verbose debugging information
-- Verify syntax correctness
+- Verify syntax correctness with detailed error reporting
+
+### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--format=lua\|json` | Specifies output format (default is `lua`) |
+| `--output=ast\|tokens\|both` | Specifies what to output (default is `ast`) |
+| `--verbose` | Enables detailed debugging information |
+
+### CLI Examples
+
+```bash
+# Basic usage - outputs AST to input.lua.output.lua in Lua format
+lua cli.lua parse input.lua
+
+# Output both AST and tokens in JSON format
+lua cli.lua parse input.lua --output=both --format=json
+
+# Output only tokens to a specific file
+lua cli.lua parse input.lua tokens_only.lua --output=tokens
+
+# Output AST with verbose logging
+lua cli.lua parse input.lua --verbose
+```
 
 ## Usage Examples
 
@@ -190,43 +179,3 @@ end
 ## License
 
 Copyright © 2025 NexusScripts
-
-## GitHub Repository
-
-### Getting Started
-
-To get started with the NexusScripts Parser Module, clone the repository:
-
-```bash
-git clone https://github.com/DynamicModz/nexus-scripts_lua_parser
-cd lua-parser
-```
-
-### Directory Structure
-
-```
-lua-parser/
-├── src/
-│   ├── ast_custom/
-│   │   ├── ast_nodes.lua
-│   │   ├── lexer.lua
-│   │   └── parser.lua
-│   └── cli.lua
-├── NexusScript.png
-└── readme.md
-```
-
-### Usage
-
-Run the CLI tool:
-
-```bash
-cd src
-lua cli.lua parse path/to/your/file.lua output.lua --format=lua
-```
-
-Add the `--verbose` flag for detailed output:
-
-```bash
-lua cli.lua parse path/to/your/file.lua output.lua --format=lua --verbose
-```

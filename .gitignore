@@ -18,3 +18,4 @@ luac.out
 *.sublime-workspace
 /lua_modules/
 /luarocks/ 
+working_on.txt
