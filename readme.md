@@ -198,7 +198,7 @@ Copyright © 2025 NexusScripts
 To get started with the NexusScripts Parser Module, clone the repository:
 
 ```bash
-git clone https://github.com/DynamicModz/hercules_parser_module.git
+git clone https://github.com/DynamicModz/nexus-scripts_lua_parser
 cd lua-parser
 ```
 
