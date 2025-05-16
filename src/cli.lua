@@ -180,9 +180,8 @@ local function handle_parse(args, verbose)
     local input_file = args[1]
     local output_file = nil
     local format = "lua" -- Default format
-    local output_type = "ast" -- Default output type
+    local output_type = "both" -- Default output type
     
-    -- Parse remaining arguments
     local i = 2
     while i <= #args do
         local arg = args[i]

@@ -311,65 +311,188 @@ local function read_number(code, pos, line, col)
     
     if pos + 1 <= #code and (code:sub(pos, pos + 1) == "0x" or code:sub(pos, pos + 1) == "0X" or 
                              code:sub(pos, pos + 1) == "0b" or code:sub(pos, pos + 1) == "0B") then
+        local is_hex = code:sub(pos + 1, pos + 1):lower() == "x"
         local is_binary = code:sub(pos + 1, pos + 1):lower() == "b"
+        local old_pos = pos
         pos = pos + 2
         col = col + 2
         
         if is_binary then
+            local had_binary_digit = false
             while pos <= #code do
                 local c = code:sub(pos, pos)
                 if c == '0' or c == '1' then
                     pos = pos + 1
                     col = col + 1
+                    had_binary_digit = true
                 else
                     break
                 end
             end
+            
+            if not had_binary_digit then
+                add_error("Malformed binary number (expected 0 or 1 digits)", line, col_start)
+                if pos == old_pos + 2 then
+                    pos = pos + 1
+                    col = col + 1
+                end
+                return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, "0")
+            end
         else
+            local has_digits = false
+            
             while pos <= #code do
                 local c = code:sub(pos, pos)
                 if (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F') then
                     pos = pos + 1
                     col = col + 1
+                    has_digits = true
                 else
                     break
                 end
             end
+            
+            if pos <= #code and code:sub(pos, pos) == '.' then
+                pos = pos + 1
+                col = col + 1
+                
+                local had_fractional_digit = false
+                while pos <= #code do
+                    local c = code:sub(pos, pos)
+                    if (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F') then
+                        pos = pos + 1
+                        col = col + 1
+                        has_digits = true
+                        had_fractional_digit = true
+                    else
+                        break
+                    end
+                end
+            end
+            
+            if pos <= #code and (code:sub(pos, pos) == 'p' or code:sub(pos, pos) == 'P') then
+                local p_pos = pos
+                local p_col = col
+                pos = pos + 1
+                col = col + 1
+                
+                if pos <= #code and (code:sub(pos, pos) == '+' or code:sub(pos, pos) == '-') then
+                    pos = pos + 1
+                    col = col + 1
+                end
+                
+                local has_exponent_digits = false
+                while pos <= #code do
+                    local c = code:sub(pos, pos)
+                    if c >= '0' and c <= '9' then
+                        pos = pos + 1
+                        col = col + 1
+                        has_exponent_digits = true
+                    else
+                        break
+                    end
+                end
+                
+                if not has_exponent_digits then
+                    add_error("Malformed hexadecimal floating-point exponent (expected decimal digits after 'p')", line, p_col)
+                end
+            end
+            
+            if not has_digits then
+                add_error("Malformed hexadecimal number (no hex digits found)", line, col_start + 2)
+                if pos == old_pos + 2 then
+                    pos = pos + 1
+                    col = col + 1
+                end
+                return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, "0x0")
+            end
         end
     else
+        local has_digits = false
+        
         while pos <= #code and code:sub(pos, pos) >= '0' and code:sub(pos, pos) <= '9' do
             pos = pos + 1
             col = col + 1
+            has_digits = true
         end
         
         if pos <= #code and code:sub(pos, pos) == '.' then
             pos = pos + 1
             col = col + 1
             
+            local had_fractional_digit = false
             while pos <= #code and code:sub(pos, pos) >= '0' and code:sub(pos, pos) <= '9' do
                 pos = pos + 1
                 col = col + 1
+                has_digits = true
+                had_fractional_digit = true
             end
         end
         
         if pos <= #code and (code:sub(pos, pos) == 'e' or code:sub(pos, pos) == 'E') then
+            local e_pos = pos
+            local e_col = col
             pos = pos + 1
             col = col + 1
             
-            if pos <= #code and (code:sub(pos + 1, pos + 1) == '+' or code:sub(pos + 1, pos + 1) == '-') then
-                pos = pos + 2
-                col = col + 2
-            end
-            
-            while pos <= #code and code:sub(pos, pos) >= '0' and code:sub(pos, pos) <= '9' do
+            if pos <= #code and (code:sub(pos, pos) == '+' or code:sub(pos, pos) == '-') then
                 pos = pos + 1
                 col = col + 1
             end
+            
+            local has_exponent_digits = false
+            while pos <= #code and code:sub(pos, pos) >= '0' and code:sub(pos, pos) <= '9' do
+                pos = pos + 1
+                col = col + 1
+                has_exponent_digits = true
+            end
+            
+            if not has_exponent_digits then
+                add_error("Malformed decimal exponent (expected digits after 'e')", line, e_col)
+            end
+        end
+        
+        if not has_digits then
+            add_error("Malformed number (no digits found)", line, col_start)
+            if pos == old_pos + 2 then
+                pos = pos + 1
+                col = col + 1
+            end
+            return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, "0")
         end
     end
     
+    if pos == start then
+        pos = pos + 1
+        col = col + 1
+    end
+    
     local number_str = code:sub(start, pos - 1)
-    local number_val = tonumber(number_str)
+    local number_val
+    
+    if number_str:match("^0[xX].*[pP]") then
+        local success = pcall(function()
+            number_val = tonumber(number_str)
+        end)
+        
+        if not success or not number_val then
+            local integral, fractional, exponent = number_str:match("0[xX]([%da-fA-F]*).?([%da-fA-F]*)p([+-]?%d+)")
+            if integral or fractional then
+                number_val = 0
+            else
+                number_val = 0
+            end
+        end
+    elseif number_str:sub(1, 2):lower() == "0b" then
+        number_val = tonumber(number_str:sub(3), 2)
+    else
+        number_val = tonumber(number_str)
+    end
+    
+    if not number_val then
+        add_error("Malformed number '" .. number_str .. "'", line, col_start)
+        number_val = 0
+    end
     
     return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, number_val, line, col_start, number_str)
 end
@@ -586,16 +709,73 @@ function lexer.tokenize(code)
                     pos = pos + 2
                     col = col + 2
                     
-                    if pos > #code or not code:sub(pos, pos):match("[%da-fA-F]") then
+                    local has_any_digit = false
+                    while pos <= #code and code:sub(pos, pos):match("[%da-fA-F]") do
+                        pos = pos + 1
+                        col = col + 1
+                        has_any_digit = true
+                    end
+                    
+                    if pos <= #code and code:sub(pos, pos) == "." then
+                        pos = pos + 1
+                        col = col + 1
+                        while pos <= #code and code:sub(pos, pos):match("[%da-fA-F]") do
+                            pos = pos + 1
+                            col = col + 1
+                            has_any_digit = true
+                        end
+                    end
+                    
+                    if pos <= #code and code:sub(pos, pos):lower() == "p" then
+                        local p_pos = pos
+                        pos = pos + 1
+                        col = col + 1
+                        
+                        if pos <= #code and (code:sub(pos, pos) == "+" or code:sub(pos, pos) == "-") then
+                            pos = pos + 1
+                            col = col + 1
+                        end
+                        
+                        local has_exp_digit = false
+                        while pos <= #code and code:sub(pos, pos):match("[%d]") do
+                            pos = pos + 1
+                            col = col + 1
+                            has_exp_digit = true
+                        end
+                        
+                        if not has_exp_digit then
+                            add_error("Malformed hexadecimal floating-point exponent", line, p_pos)
+                        end
+                    end
+                    
+                    if not has_any_digit then
                         add_error("Malformed hexadecimal number", line, col)
                         table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
                         goto continue
                     end
                     
-                    while pos <= #code and code:sub(pos, pos):match("[%da-fA-F]") do
-                        pos = pos + 1
-                        col = col + 1
+                    local num_str = code:sub(start, pos - 1)
+                    local num
+                    
+                    if num_str:match("[%.pP]") then
+                        local success = pcall(function() 
+                            num = tonumber(num_str) 
+                        end)
+                        
+                        if not success or not num then
+                            add_error("Malformed hexadecimal float: " .. num_str, line, col_start)
+                            num = 0
+                        end
+                    else
+                        num = tonumber(num_str)
+                        if not num then
+                            add_error("Malformed hexadecimal number: " .. num_str, line, col_start)
+                            num = 0
+                        end
                     end
+                    
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str))
+                    goto continue
                 elseif next_char:lower() == "b" then
                     is_binary = true
                     pos = pos + 2

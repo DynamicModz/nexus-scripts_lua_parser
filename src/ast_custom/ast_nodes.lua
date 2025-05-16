@@ -236,12 +236,15 @@ function ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
         metamethod = nil
     end
     
+    local is_lua53_feature = (operator == "~") 
+    
     return with_location({ 
         type = "UnaryExpression", 
         operator = operator, 
         argument = argument,
         potential_metamethod = metamethod,
-        has_metamethod = metamethod ~= nil
+        has_metamethod = metamethod ~= nil,
+        is_lua53_feature = is_lua53_feature
     }, token_start, token_end)
 end
 
@@ -266,6 +269,13 @@ function ast_nodes.BinaryExpression(operator, left, right, token_start, token_en
         negate_result = true
     end
     
+    local is_lua53_feature = false
+    if operator == "&" or operator == "|" or 
+       operator == "~" or operator == "<<" or 
+       operator == ">>" or operator == "//" then
+        is_lua53_feature = true
+    end
+    
     return with_location({
         type = "BinaryExpression",
         operator = operator,
@@ -277,7 +287,8 @@ function ast_nodes.BinaryExpression(operator, left, right, token_start, token_en
         potential_metamethod = metamethod,
         has_metamethod = metamethod ~= nil,
         swap_operands = swap_operands,
-        negate_result = negate_result
+        negate_result = negate_result,
+        is_lua53_feature = is_lua53_feature
     }, token_start, token_end)
 end
 
@@ -388,10 +399,20 @@ function ast_nodes.FunctionExpression(parameters, body, isLocal, token_start, to
 end
 
 function ast_nodes.NumericLiteral(value, raw, token_start, token_end)
+    local is_lua53_feature = false
+    if raw then
+        if raw:match("^0[xX].*[pP]") then
+            is_lua53_feature = true
+        elseif raw:match("^0[bB]") then
+            is_lua53_feature = true
+        end
+    end
+    
     return with_location({ 
         type = "NumericLiteral", 
         value = value, 
-        raw = raw 
+        raw = raw,
+        is_lua53_feature = is_lua53_feature
     }, token_start, token_end)
 end
 
@@ -413,6 +434,12 @@ function ast_nodes.StringLiteral(value, raw, token_start, token_end)
         type = "StringLiteral",
         value = value,
         raw = raw
+    }, token_start, token_end)
+end
+
+function ast_nodes.VarargExpression(token_start, token_end)
+    return with_location({
+        type = "VarargExpression"
     }, token_start, token_end)
 end
 
