@@ -11,7 +11,7 @@ local OP_TO_METAMETHOD = {
     ["/"] = "__div",
     ["%"] = "__mod",
     ["^"] = "__pow",
-    ["//"] = "__idiv", 
+    ["//"] = "__idiv",
     
     ["&"] = "__band",
     ["|"] = "__bor",
@@ -39,7 +39,9 @@ local OP_TO_METAMETHOD = {
     ["gc"] = "__gc",
     ["mode"] = "__mode",
     ["metatable"] = "__metatable",
-    ["name"] = "__name"
+    ["name"] = "__name",
+    
+    ["close"] = "__close"
 }
 
 local ast_nodes = {}
@@ -105,22 +107,31 @@ function ast_nodes.Chunk(body, comments, token_start, token_end)
 end
 
 function ast_nodes.LocalStatement(variables, init, token_start, token_end)
+    local has_attributed_variables = false
+    local has_const_variables = false
+    local has_close_variables = false
+    
     for _, variable in ipairs(variables or {}) do
-        if variable.type == "Identifier" and variable.attributes and 
-          (variable.attributes.const or variable.attributes.close) then
-            return with_location({ 
-                type = "LocalStatement", 
-                variables = variables or {}, 
-                init = init or {},
+        if variable.type == "Identifier" and variable.attributes then
+            if variable.attributes.const then
                 has_attributed_variables = true
-            }, token_start, token_end)
+                has_const_variables = true
+            end
+            if variable.attributes.close then
+                has_attributed_variables = true
+                has_close_variables = true
+            end
         end
     end
     
     return with_location({ 
         type = "LocalStatement", 
         variables = variables or {}, 
-        init = init or {} 
+        init = init or {},
+        has_attributed_variables = has_attributed_variables,
+        has_const_variables = has_const_variables,
+        has_close_variables = has_close_variables,
+        lua_version = has_attributed_variables and "5.4" or nil
     }, token_start, token_end)
 end
 
@@ -211,14 +222,16 @@ function ast_nodes.ElseClause(body, token_start, token_end)
     }, token_start, token_end)
 end
 
-function ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end)
+function ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end, is_lua54_style)
     return with_location({ 
         type = "ForNumericStatement", 
         variable = variable, 
         start = start, 
         stop = stop, 
         step = step, 
-        body = body or {} 
+        body = body or {},
+        is_lua54_style = is_lua54_style or false,
+        lua_version = is_lua54_style and "5.4" or nil
     }, token_start, token_end)
 end
 
@@ -272,14 +285,15 @@ function ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
         metamethod = nil
     end
     
-    local is_lua53_feature = (operator == "~") 
+    local is_lua53_feature = (operator == "~")
     
     return with_location({ 
         type = "UnaryExpression",
         operator = operator,
         argument = argument,
         metamethod = metamethod,
-        is_lua53_feature = is_lua53_feature
+        is_lua53_feature = is_lua53_feature,
+        lua_version = is_lua53_feature and "5.3" or nil
     }, token_start, token_end)
 end
 
@@ -289,6 +303,13 @@ function ast_nodes.BinaryExpression(operator, left, right, token_start, token_en
     local substituted_operator = operator
     local swap_operands = false
     
+    local is_lua53_feature = operator == "&" or 
+                             operator == "|" or 
+                             operator == "~" or 
+                             operator == "<<" or 
+                             operator == ">>" or 
+                             operator == "//"
+    
     return with_location({ 
         type = "BinaryExpression",
         operator = operator,
@@ -296,7 +317,9 @@ function ast_nodes.BinaryExpression(operator, left, right, token_start, token_en
         right = right,
         metamethod = metamethod,
         substituted_operator = substituted_operator,
-        swap_operands = swap_operands
+        swap_operands = swap_operands,
+        is_lua53_feature = is_lua53_feature,
+        lua_version = is_lua53_feature and "5.3" or nil
     }, token_start, token_end)
 end
 
@@ -420,7 +443,8 @@ function ast_nodes.NumericLiteral(value, raw, token_start, token_end)
         type = "NumericLiteral", 
         value = value, 
         raw = raw,
-        is_lua53_feature = is_lua53_feature
+        is_lua53_feature = is_lua53_feature,
+        lua_version = is_lua53_feature and "5.3" or nil
     }, token_start, token_end)
 end
 
@@ -438,10 +462,19 @@ function ast_nodes.NilLiteral(token_start, token_end)
 end
 
 function ast_nodes.StringLiteral(value, raw, token_start, token_end)
+    local is_lua53_feature = false
+    if raw then
+        if raw:match("\\u%{") or raw:match("\\z") then
+            is_lua53_feature = true
+        end
+    end
+    
     return with_location({
         type = "StringLiteral",
         value = value,
-        raw = raw
+        raw = raw,
+        is_lua53_feature = is_lua53_feature,
+        lua_version = is_lua53_feature and "5.3" or nil
     }, token_start, token_end)
 end
 

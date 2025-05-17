@@ -385,31 +385,28 @@ parse_identifier = function()
         local token_start = token
         local token_end = token
         
-        if match(lexer.TOKEN_TYPES.LT) then
-            local next_idx = current_token_idx + 1
-            if next_idx <= #tokens and 
-               (tokens[next_idx].type == lexer.TOKEN_TYPES.ATTR_CONST or 
-                tokens[next_idx].type == lexer.TOKEN_TYPES.ATTR_CLOSE) then
-                
-                local lt_token = current_token
-                consume(lexer.TOKEN_TYPES.LT)
-                
-                if match(lexer.TOKEN_TYPES.ATTR_CONST) then
-                    attributes.const = true
-                    consume(lexer.TOKEN_TYPES.ATTR_CONST)
-                elseif match(lexer.TOKEN_TYPES.ATTR_CLOSE) then
-                    attributes.close = true
-                    consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
-                else
-                    add_error("Expected 'const' or 'close' after '<'", current_token)
-                end
-                
-                if match(lexer.TOKEN_TYPES.GT) then
-                    token_end = current_token
-                    consume(lexer.TOKEN_TYPES.GT)
-                else
-                    add_error("Expected '>' to close attribute", current_token)
-                end
+        if match(lexer.TOKEN_TYPES.LT_SYMBOL) then
+            local lt_token = current_token
+            consume(lexer.TOKEN_TYPES.LT_SYMBOL)
+            
+            if match(lexer.TOKEN_TYPES.ATTR_CONST) then
+                attributes.const = true
+                consume(lexer.TOKEN_TYPES.ATTR_CONST)
+            elseif match(lexer.TOKEN_TYPES.ATTR_CLOSE) then
+                attributes.close = true
+                consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
+            elseif match(lexer.TOKEN_TYPES.ATTR_TOCLOSE) then
+                attributes.close = true
+                consume(lexer.TOKEN_TYPES.ATTR_TOCLOSE)
+            else
+                add_error("Expected 'const', 'close', or 'toclose' after '<'", current_token)
+            end
+            
+            if match(lexer.TOKEN_TYPES.GT_SYMBOL) then
+                token_end = current_token
+                consume(lexer.TOKEN_TYPES.GT_SYMBOL)
+            else
+                add_error("Expected '>' to close attribute", current_token)
             end
         end
         
@@ -711,6 +708,11 @@ parse_unary_expression = function(depth, context)
         local token_end = argument.loc and argument.loc["end"] and tokens[current_token_idx - 1] or token_start
         local expr = ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
         expr.expression_depth = depth
+        
+        if operator == "~" then
+            expr.is_lua53_feature = true
+        end
+        
         return expr
     end
     
@@ -729,7 +731,7 @@ local BINARY_OPS = {
     ['<<'] = { precedence = 7 },
     ['>>'] = { precedence = 7 },
     ['&'] = { precedence = 6 },
-    ['~'] = { precedence = 5 }, 
+    ['~'] = { precedence = 5 },
     ['|'] = { precedence = 4 },
     ['<'] = { precedence = 3 },
     ['<='] = { precedence = 3 },
@@ -844,7 +846,7 @@ parse_binary_expression = function(min_precedence, depth, context)
         binary_expr.expression_depth = depth
         
         if op == '&' or op == '|' or op == '~' or op == '<<' or op == '>>' or op == '//' then
-            binary_expr.lua53_feature = true
+            binary_expr.is_lua53_feature = true
         end
         
         left = binary_expr
@@ -1058,46 +1060,120 @@ parse_for_statement = function()
                 add_error("Expected start expression in for loop", current_token)
                 return nil
             end
-            
-            if not match(lexer.TOKEN_TYPES.COMMA) then
-                add_error("Expected ',' after start expression in for loop", current_token)
-            else
-                consume(lexer.TOKEN_TYPES.COMMA)
-            end
-            
-            local stop = parse_expression()
-            if not stop then
-                add_error("Expected stop expression in for loop", current_token)
-                return nil
-            end
-            
-            local step = nil
-            if match(lexer.TOKEN_TYPES.COMMA) then
-                consume(lexer.TOKEN_TYPES.COMMA)
+
+            if match(lexer.TOKEN_TYPES.TO) then
+                local to_token = current_token
+                consume(lexer.TOKEN_TYPES.TO)
                 
-                step = parse_expression()
-                if not step then
-                    add_error("Expected step expression after comma in for loop", current_token)
+                local stop = parse_expression()
+                if not stop then
+                    add_error("Expected stop expression after 'to' in for loop", current_token)
                     return nil
                 end
-            end
-            
-            if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
-                add_error("Expected 'do' after for loop parameters", current_token)
+                
+                local step = nil
+                if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "step" then
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                    
+                    step = parse_expression()
+                    if not step then
+                        add_error("Expected step expression after 'step' in for loop", current_token)
+                        return nil
+                    end
+                end
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
+                    add_error("Expected 'do' after for loop parameters", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local body = parse_block()
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end") then
+                    add_error("Expected 'end' to close for loop", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local token_end = tokens[current_token_idx - 1]
+                return ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end, true)
+            elseif match(lexer.TOKEN_TYPES.COMMA) then
+                consume(lexer.TOKEN_TYPES.COMMA)
+                
+                local stop = parse_expression()
+                if not stop then
+                    add_error("Expected stop expression in for loop", current_token)
+                    return nil
+                end
+                
+                local step = nil
+                if match(lexer.TOKEN_TYPES.COMMA) then
+                    consume(lexer.TOKEN_TYPES.COMMA)
+                    
+                    step = parse_expression()
+                    if not step then
+                        add_error("Expected step expression after comma in for loop", current_token)
+                        return nil
+                    end
+                end
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
+                    add_error("Expected 'do' after for loop parameters", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local body = parse_block()
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end") then
+                    add_error("Expected 'end' to close for loop", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local token_end = tokens[current_token_idx - 1]
+                return ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end, false)
             else
-                consume(lexer.TOKEN_TYPES.KEYWORD)
+                local variables = { variable }
+                
+                while match(lexer.TOKEN_TYPES.COMMA) do
+                    consume(lexer.TOKEN_TYPES.COMMA)
+                    
+                    local var = parse_identifier()
+                    if not var then
+                        add_error("Expected variable name after ',' in for loop", current_token)
+                        break
+                    end
+                    
+                    table.insert(variables, var)
+                end
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "in") then
+                    add_error("Expected 'in' after variable list in for loop", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local iterators = parse_expression_list(0)
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
+                    add_error("Expected 'do' after for loop parameters", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local body = parse_block()
+                
+                if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end") then
+                    add_error("Expected 'end' to close for loop", current_token)
+                else
+                    consume(lexer.TOKEN_TYPES.KEYWORD)
+                end
+                
+                local token_end = tokens[current_token_idx - 1]
+                return ast_nodes.ForGenericStatement(variables, iterators, body, token_start, token_end)
             end
-            
-            local body = parse_block()
-            
-            if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end") then
-                add_error("Expected 'end' to close for loop", current_token)
-            else
-                consume(lexer.TOKEN_TYPES.KEYWORD)
-            end
-            
-            local token_end = tokens[current_token_idx - 1]
-            return ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end)
         else
             local variables = { variable }
             
@@ -1119,7 +1195,7 @@ parse_for_statement = function()
                 consume(lexer.TOKEN_TYPES.KEYWORD)
             end
             
-            local iterators = parse_expression_list(depth + 1)
+            local iterators = parse_expression_list(0)
             
             if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
                 add_error("Expected 'do' after for loop parameters", current_token)
@@ -1345,10 +1421,19 @@ parse_local_statement = function()
     local init = {}
     
     local has_attributes = false
+    local has_const = false
+    local has_close = false
+    
     for _, var in ipairs(variables) do
-        if var.attributes and (var.attributes.const or var.attributes.close) then
-            has_attributes = true
-            break
+        if var.attributes then
+            if var.attributes.const then
+                has_const = true
+                has_attributes = true
+            end
+            if var.attributes.close then
+                has_close = true
+                has_attributes = true
+            end
         end
     end
     
@@ -1356,10 +1441,12 @@ parse_local_statement = function()
         consume(lexer.TOKEN_TYPES.ASSIGN)
         init = parse_expression_list()
     elseif has_attributes then
-        for _, var in ipairs(variables) do
-            if var.attributes and var.attributes.const then
-                add_error("<const> variables must be initialized", current_token)
-                break
+        if has_const then
+            for _, var in ipairs(variables) do
+                if var.attributes and var.attributes.const then
+                    add_error("<const> variables must be initialized", current_token)
+                    break
+                end
             end
         end
     end
@@ -1367,6 +1454,17 @@ parse_local_statement = function()
     local token_end = current_token
     local end_token_idx = current_token_idx
     local node = ast_nodes.LocalStatement(variables, init, token_start, token_end)
+    
+    if has_attributes then
+        node.has_attributed_variables = true
+        if has_const then
+            node.has_const_variables = true
+        end
+        if has_close then
+            node.has_close_variables = true
+        end
+    end
+    
     return attach_comments(node, start_token_idx, end_token_idx)
 end
 

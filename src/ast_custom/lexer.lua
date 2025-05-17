@@ -49,8 +49,12 @@ lexer.TOKEN_TYPES = {
     VARARG = "VARARG",
     ATTR_CONST = "ATTR_CONST",
     ATTR_CLOSE = "ATTR_CLOSE",
+    ATTR_TOCLOSE = "ATTR_TOCLOSE",
+    LT_SYMBOL = "LT_SYMBOL",
+    GT_SYMBOL = "GT_SYMBOL",
     COMMENT = "COMMENT",
     SHEBANG = "SHEBANG",
+    TO = "TO",
     EOF = "EOF"
 }
 
@@ -73,7 +77,9 @@ lexer.KEYWORDS = {
     ["or"] = true,
     ["repeat"] = true,
     ["return"] = true,
+    ["step"] = true, 
     ["then"] = true,
+    ["to"] = true,
     ["true"] = true,
     ["until"] = true,
     ["while"] = true
@@ -428,12 +434,13 @@ end
 local function read_number(code, pos, line, col)
     local start = pos
     local col_start = col
+    local old_pos = pos
     
     if pos + 1 <= #code and (code:sub(pos, pos + 1) == "0x" or code:sub(pos, pos + 1) == "0X" or 
                              code:sub(pos, pos + 1) == "0b" or code:sub(pos, pos + 1) == "0B") then
         local is_hex = code:sub(pos + 1, pos + 1):lower() == "x"
         local is_binary = code:sub(pos + 1, pos + 1):lower() == "b"
-        local old_pos = pos
+        old_pos = pos
         pos = pos + 2
         col = col + 2
         
@@ -458,6 +465,19 @@ local function read_number(code, pos, line, col)
                 end
                 return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, "0")
             end
+            
+            local binary_str = code:sub(start, pos - 1)
+            local binary_digits = binary_str:sub(3)
+            local decimal_value = 0
+            
+            for i = 1, #binary_digits do
+                decimal_value = decimal_value * 2
+                if binary_digits:sub(i, i) == '1' then
+                    decimal_value = decimal_value + 1
+                end
+            end
+            
+            return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, decimal_value, line, col_start, binary_str)
         else
             local has_digits = false
             
@@ -555,7 +575,7 @@ local function read_number(code, pos, line, col)
             pos = pos + 1
             col = col + 1
             
-            if pos <= #code and (code:sub(pos, pos) == '+' or code:sub(pos, pos) == '-') then
+            if pos <= #code and (code:sub(pos + 1, pos + 1) == '+' or code:sub(pos + 1, pos + 1) == '-') then
                 pos = pos + 2
                 col = col + 2
             end
@@ -588,6 +608,7 @@ local function read_number(code, pos, line, col)
     end
     
     local number_str = code:sub(start, pos - 1)
+    
     local number_val
     
     if number_str:match("^0[xX].*[pP]") then
@@ -604,14 +625,71 @@ local function read_number(code, pos, line, col)
             end
         end
     elseif number_str:sub(1, 2):lower() == "0b" then
-        number_val = tonumber(number_str:sub(3), 2)
+        local binary_digits = number_str:sub(3)
+        
+        if #binary_digits == 0 then
+            add_error("Malformed binary number (no binary digits after '0b')", line, col_start)
+            number_val = 0
+        else
+            local valid_binary = true
+            for i = 1, #binary_digits do
+                local digit = binary_digits:sub(i, i)
+                if digit ~= "0" and digit ~= "1" then
+                    valid_binary = false
+                    add_error("Invalid binary digit '" .. digit .. "' in binary number", line, col_start)
+                    break
+                end
+            end
+            
+            if valid_binary then
+                local decimal_value = 0
+                for i = 1, #binary_digits do
+                    decimal_value = decimal_value * 2
+                    if binary_digits:sub(i, i) == "1" then
+                        decimal_value = decimal_value + 1
+                    end
+                end
+                number_val = decimal_value
+            else
+                number_val = 0
+            end
+        end
     else
         number_val = tonumber(number_str)
     end
     
     if not number_val then
-        add_error("Malformed number '" .. number_str .. "'", line, col_start)
-        number_val = 0
+        if number_str:sub(1, 2):lower() == "0b" then
+            local binary_digits = number_str:sub(3)
+            local valid_binary = true
+            
+            for i = 1, #binary_digits do
+                local digit = binary_digits:sub(i, i)
+                if digit ~= "0" and digit ~= "1" then
+                    valid_binary = false
+                    add_error("Invalid binary digit '" .. digit .. "' in binary number", line, col_start)
+                    break
+                end
+            end
+            
+            if valid_binary and #binary_digits > 0 then
+                number_val = 0
+                for i = 1, #binary_digits do
+                    number_val = number_val * 2
+                    if binary_digits:sub(i, i) == "1" then
+                        number_val = number_val + 1
+                    end
+                end
+            else
+                if #binary_digits == 0 then
+                    add_error("Malformed binary number (no binary digits after '0b')", line, col_start)
+                end
+                number_val = 0
+            end
+        else
+            add_error("Malformed number", line, col)
+            number_val = 0
+        end
     end
     
     return pos, line, col, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, number_val, line, col_start, number_str)
@@ -653,6 +731,86 @@ local function read_string(code, pos, line, col)
                     str = str .. '\f'
                 elseif c == '\\' or c == '\'' or c == '\"' then
                     str = str .. c
+                elseif c == 'z' then
+                    pos = pos + 1
+                    col = col + 1
+                    while pos <= #code do
+                        local next_c = code:sub(pos, pos)
+                        if next_c == ' ' or next_c == '\t' or next_c == '\n' or next_c == '\r' then
+                            raw = raw .. next_c
+                            if next_c == '\n' or next_c == '\r' then
+                                if next_c == '\r' and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == '\n' then
+                                    raw = raw .. '\n'
+                                    pos = pos + 1
+                                end
+                                line = line + 1
+                                col = 1
+                            else
+                                col = col + 1
+                            end
+                            pos = pos + 1
+                        else
+                            break
+                        end
+                    end
+                    pos = pos - 1
+                    col = col - 1
+                elseif c == 'u' and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == '{' then
+                    raw = raw .. '{'
+                    pos = pos + 1
+                    col = col + 1
+                    
+                    local hex_start = pos + 1
+                    local hex_end = hex_start
+                    
+                    while hex_end <= #code and code:sub(hex_end, hex_end) ~= '}' do
+                        raw = raw .. code:sub(hex_end, hex_end)
+                        hex_end = hex_end + 1
+                    end
+                    
+                    if hex_end <= #code and code:sub(hex_end, hex_end) == '}' then
+                        raw = raw .. '}'
+                        local hex_digits = code:sub(hex_start, hex_end - 1)
+                        local codepoint = tonumber(hex_digits, 16)
+                        
+                        if codepoint then
+                            if codepoint <= 0x7F then
+                                str = str .. string.char(codepoint)
+                            elseif codepoint <= 0x7FF then
+                                local b1 = 0xC0 + math.floor(codepoint / 0x40)
+                                local b2 = 0x80 + (codepoint % 0x40)
+                                str = str .. string.char(b1, b2)
+                            elseif codepoint <= 0xFFFF then
+                                local b1 = 0xE0 + math.floor(codepoint / 0x1000)
+                                local b2 = 0x80 + math.floor((codepoint % 0x1000) / 0x40)
+                                local b3 = 0x80 + (codepoint % 0x40)
+                                str = str .. string.char(b1, b2, b3)
+                            elseif codepoint <= 0x10FFFF then
+                                local b1 = 0xF0 + math.floor(codepoint / 0x40000)
+                                local b2 = 0x80 + math.floor((codepoint % 0x40000) / 0x1000)
+                                local b3 = 0x80 + math.floor((codepoint % 0x1000) / 0x40)
+                                local b4 = 0x80 + (codepoint % 0x40)
+                                str = str .. string.char(b1, b2, b3, b4)
+                            else
+                                add_error("Invalid Unicode codepoint: " .. codepoint, line, col)
+                                str = str .. ""
+                            end
+                        else
+                            add_error("Invalid hexadecimal in \\u{} escape", line, col)
+                            str = str .. "" 
+                        end
+                        
+                        pos = hex_end + 1
+                        col = col + (hex_end - hex_start + 2)
+                    else
+                        add_error("Unclosed \\u{} escape sequence", line, col)
+                        str = str .. ""
+                        pos = hex_end
+                        col = col + (hex_end - hex_start)
+                    end
+                    
+                    pos = pos - 1
+                    col = col - 1
                 else
                     str = str .. c  
                 end
@@ -751,6 +909,8 @@ local function read_long_string(code, pos, line, col, equals_count)
 end
 
 local function add_error(message, line, col)
+    print("LEXER DEBUG: add_error called with message '" .. message .. "' at line " .. line .. ", col " .. col)
+    print("LEXER DEBUG: stack trace: " .. debug.traceback())
     print("LEXER ERROR: " .. message .. " at line " .. line .. ", col " .. col)
 end
 
@@ -832,6 +992,7 @@ function lexer.tokenize(code, source_name)
             goto continue
         end
         
+        
         local c = code:sub(pos, pos)
         
         if c:match("[%a_]") then
@@ -853,6 +1014,8 @@ function lexer.tokenize(code, source_name)
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.TRUE, true, line, col_start, id, token_start_pos, source_name))
                 elseif id == "false" then
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.FALSE, false, line, col_start, id, token_start_pos, source_name))
+                elseif id == "to" then
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.TO, id, line, col_start, id, token_start_pos, source_name))
                 else
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.KEYWORD, id, line, col_start, id, token_start_pos, source_name))
                 end
@@ -861,6 +1024,8 @@ function lexer.tokenize(code, source_name)
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CONST, id, line, col_start, id, token_start_pos, source_name))
                 elseif id == "close" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CLOSE, id, line, col_start, id, token_start_pos, source_name))
+                elseif id == "toclose" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_TOCLOSE, id, line, col_start, id, token_start_pos, source_name))
                 else
                     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDENTIFIER, id, line, col_start, id, token_start_pos, source_name))
                 end
@@ -1010,8 +1175,37 @@ function lexer.tokenize(code, source_name)
             local num = tonumber(num_str)
             
             if not num then
-                add_error("Malformed number", line, col)
-                num = 0
+                if num_str:sub(1, 2):lower() == "0b" then
+                    local binary_digits = num_str:sub(3)
+                    local valid_binary = true
+                    
+                    for i = 1, #binary_digits do
+                        local digit = binary_digits:sub(i, i)
+                        if digit ~= "0" and digit ~= "1" then
+                            valid_binary = false
+                            add_error("Invalid binary digit '" .. digit .. "' in binary number", line, col_start)
+                            break
+                        end
+                    end
+                    
+                    if valid_binary and #binary_digits > 0 then
+                        num = 0
+                        for i = 1, #binary_digits do
+                            num = num * 2
+                            if binary_digits:sub(i, i) == "1" then
+                                num = num + 1
+                            end
+                        end
+                    else
+                        if #binary_digits == 0 then
+                            add_error("Malformed binary number (no binary digits after '0b')", line, col_start)
+                        end
+                        num = 0
+                    end
+                else
+                    add_error("Malformed number", line, col)
+                    num = 0
+                end
             end
             
             table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str, token_start_pos, source_name))
@@ -1244,7 +1438,7 @@ function lexer.tokenize(code, source_name)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT, "<", line, col, "<", token_start_pos, source_name))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT_SYMBOL, "<", line, col, "<", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
@@ -1259,7 +1453,7 @@ function lexer.tokenize(code, source_name)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT, ">", line, col, ">", token_start_pos, source_name))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT_SYMBOL, ">", line, col, ">", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end

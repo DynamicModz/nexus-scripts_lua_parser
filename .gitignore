@@ -25,3 +25,8 @@ simple_script.lua
 simple_script.lua.output.lua
 /ast test files/
 /complex_expressions_tests/
+test_lua53_54_parser.lua
+#lua_5.3_5.4_features.lua
+#lua_5.3_5.4_features.lua.output.lua
+clean_test.lua
+clean_test.lua.output.lua
