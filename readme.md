@@ -9,7 +9,7 @@ A Lua parser, lexer, and AST generator for code analysis and transformation.
 
 ## Module Overview
 
-The NexusScripts Parser Module consists of three main components that work together to parse and process Lua code:
+The NexusScripts Parser Module consists of several main components that work together to parse, process, and format Lua code:
 
 ### 1. Lexer (`lexer.lua`)
 
@@ -55,21 +55,62 @@ The AST node module defines the structure for each type of node in the Abstract 
 - Comprehensive source location tracking
 - Program structure, statements, expressions, and literals
 
+### 4. Formatter (`formatter.lua`)
+
+The formatter module handles code beautification and minification based on the AST.
+
+**Current Features:**
+- Beautification with configurable formatting options
+- Minification with various optimization levels
+- Preservation of code semantics while transforming appearance
+- Customizable spacing, indentation, and line break rules
+- Consistent handling of operators, including bitwise operators
+- Comment preservation options
+
+### 5. Formatter Configuration (`formatter_config.lua`)
+
+The formatter configuration module manages formatting preferences and presets.
+
+**Current Features:**
+- Default configuration with reasonable defaults
+- Multiple built-in presets (default, compact, expanded, minify)
+- Configuration merging capabilities
+- Save/load configuration to/from files
+- Comprehensive options for:
+  - Indentation style and size
+  - Line breaks and maximum line length
+  - Spacing around operators, commas, and brackets
+  - Comment preservation settings
+  - Minification options
+
+### 6. Formatter Pipeline (`formatter_pipeline.lua`)
+
+The formatter pipeline orchestrates the entire formatting process from code to AST to formatted output.
+
+**Current Features:**
+- Complete formatting workflow handling
+- Support for both beautification and minification
+- Integration with lexer, parser, and formatter modules
+- Preset-based or custom configuration
+- Robust error handling and reporting
+- Debugging capabilities for AST inspection
+
 ## CLI Tool
 
 The NexusScripts Parser Module includes a command-line interface (CLI) tool with the following features:
 
 - Parse Lua files and output AST representation
-- Output tokenization information
+- Format Lua files with beautification or minification
+- Multiple formatting style presets (default, compact, expanded, minify)
+- Custom formatter configuration support
 - Generate output in either Lua table or JSON format
 - Output AST only, tokens only, or both in a single command
-- Create default output files (input_file.output.lua) when no output file is specified
-- Use Lua format by default
+- Create default output files when no output file is specified
 
 ### CLI Examples
 
 ```bash
-# Basic usage - outputs both AST and tokens to input.lua.output.lua in Lua format
+# Basic parsing - outputs both AST and tokens to input.lua.output.lua in Lua format
 lua src/cli.lua parse input.lua
 
 # Output both AST and tokens in JSON format
@@ -80,6 +121,27 @@ lua src/cli.lua parse input.lua tokens_only.lua --output=tokens
 
 # Output AST with verbose logging
 lua src/cli.lua parse input.lua --verbose
+
+# Format a Lua file with default style
+lua src/cli.lua format input.lua
+
+# Format a Lua file with compact style
+lua src/cli.lua format input.lua --style=compact
+
+# Minify a Lua file
+lua src/cli.lua format input.lua --style=minify
+
+# Format using a custom configuration
+lua src/cli.lua format input.lua --config=my_config.lua
+
+# Format with AST debugging (prints AST structure to console)
+lua src/cli.lua format input.lua --debug-ast
+
+# Create a formatter configuration file with a preset
+lua src/cli.lua config my_config.lua --preset=expanded
+
+# Show help information
+lua src/cli.lua help
 ```
 
 ## Planned Improvements
@@ -115,6 +177,14 @@ lua src/cli.lua parse input.lua --verbose
 - Support for attaching metadata to nodes
 - Better serialization/deserialization of AST
 - Utility functions for common AST transformations
+
+### Formatter Improvements
+- Add intelligent handling of long expressions with line wrapping
+- Support for more advanced table formatting options
+- Better handling of complex multi-line comments
+- Automatic detection of formatting style from existing code
+- Incremental formatting for large files
+- Configuration validation and suggestions
 
 ## Future Plans
 

@@ -110,6 +110,7 @@ function ast_nodes.LocalStatement(variables, init, token_start, token_end)
     local has_attributed_variables = false
     local has_const_variables = false
     local has_close_variables = false
+    local has_toclose_variables = false
     
     for _, variable in ipairs(variables or {}) do
         if variable.type == "Identifier" and variable.attributes then
@@ -121,6 +122,10 @@ function ast_nodes.LocalStatement(variables, init, token_start, token_end)
                 has_attributed_variables = true
                 has_close_variables = true
             end
+            if variable.attributes.toclose then
+                has_attributed_variables = true
+                has_toclose_variables = true
+            end
         end
     end
     
@@ -131,6 +136,7 @@ function ast_nodes.LocalStatement(variables, init, token_start, token_end)
         has_attributed_variables = has_attributed_variables,
         has_const_variables = has_const_variables,
         has_close_variables = has_close_variables,
+        has_toclose_variables = has_toclose_variables,
         lua_version = has_attributed_variables and "5.4" or nil
     }, token_start, token_end)
 end

@@ -396,7 +396,7 @@ parse_identifier = function()
                 attributes.close = true
                 consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
             elseif match(lexer.TOKEN_TYPES.ATTR_TOCLOSE) then
-                attributes.close = true
+                attributes.toclose = true
                 consume(lexer.TOKEN_TYPES.ATTR_TOCLOSE)
             else
                 add_error("Expected 'const', 'close', or 'toclose' after '<'", current_token)

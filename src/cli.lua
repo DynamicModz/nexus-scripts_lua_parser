@@ -7,6 +7,8 @@
 package.path = package.path .. ";./?.lua;./src/?.lua"
 local parser = require("ast_custom.parser")
 local lexer = require("ast_custom.lexer")
+local formatter = require("ast_custom.formatter")
+local formatter_config = require("ast_custom.formatter_config")
 
 local cli = {}
 
@@ -27,6 +29,10 @@ local COMMANDS = {
         desc = "Parse a Lua file and generate AST",
         usage = "cli.lua parse <input_file> [output_file] [--format=json|lua] [--output=ast|tokens|both]"
     },
+    format = {
+        desc = "Format a Lua file with beautification or minification",
+        usage = "cli.lua format <input_file> [output_file] [--style=default|compact|expanded|minify] [--config=<config_file>] [--debug-ast]"
+    },
     help = {
         desc = "Show help information",
         usage = "cli.lua help [command]"
@@ -34,6 +40,10 @@ local COMMANDS = {
     version = {
         desc = "Show version information",
         usage = "cli.lua version"
+    },
+    config = {
+        desc = "Create a formatter configuration file",
+        usage = "cli.lua config <output_file> [--preset=default|compact|expanded|minify]"
     }
 }
 
@@ -342,6 +352,147 @@ local function handle_parse(args, verbose)
     return true
 end
 
+local function handle_format(args, verbose)
+    if #args < 1 then
+        print_error("Missing input file")
+        print_info("Usage: " .. COMMANDS.format.usage)
+        return false
+    end
+    
+    local input_file = args[1]
+    local output_file = nil
+    local style = "default"
+    local config_file = nil
+    local debug_ast = false
+    
+    local i = 2
+    while i <= #args do
+        if args[i]:match("^%-%-style=") then
+            style = args[i]:match("^%-%-style=(.+)$")
+        elseif args[i]:match("^%-%-config=") then
+            config_file = args[i]:match("^%-%-config=(.+)$")
+        elseif args[i] == "--debug-ast" then
+            debug_ast = true
+            print_verbose("AST debugging enabled", verbose)
+        elseif not output_file and not args[i]:match("^%-%-") then
+            output_file = args[i]
+        end
+        i = i + 1
+    end
+    
+    if not output_file then
+        output_file = input_file .. ".formatted.lua"
+        print_verbose("No output file specified, using default: " .. output_file, verbose)
+    end
+    
+    if not file_exists(input_file) then
+        print_error("Input file does not exist: " .. input_file)
+        return false
+    end
+    
+    print_verbose("Reading input file: " .. input_file, verbose)
+    local content = read_file(input_file)
+    if not content then
+        print_error("Failed to read input file: " .. input_file)
+        return false
+    end
+    
+    if content == "" then
+        print_error("Input file is empty: " .. input_file)
+        return false
+    end
+    
+    print_verbose("Formatting Lua code with style: " .. style, verbose)
+    
+    local config
+    if config_file then
+        print_verbose("Loading config from file: " .. config_file, verbose)
+        local cfg, err = formatter_config.load(config_file)
+        if not cfg then
+            print_error("Failed to load config file: " .. err)
+            return false
+        end
+        config = cfg
+    else
+        if formatter.PRESETS and formatter.PRESETS[style] then
+            config = formatter.PRESETS[style]
+        else
+            config = formatter.DEFAULT_CONFIG
+        end
+    end
+    
+    local fmt = formatter.create(config)
+    local formatted, err
+    
+    local pipeline_options = {
+        config = config,
+        minify = (style == "minify"),
+        debug_ast = debug_ast
+    }
+    
+    local formatter_pipeline = require("ast_custom.formatter_pipeline")
+    formatted, err = formatter_pipeline.run(content, input_file, pipeline_options)
+    
+    if not formatted then
+        print_error("Formatting failed: " .. tostring(err))
+        return false
+    end
+    
+    print_verbose("Writing formatted code to: " .. output_file, verbose)
+    if not write_file(output_file, formatted) then
+        print_error("Failed to write output file: " .. output_file)
+        return false
+    end
+    
+    print_success("Lua code formatted successfully and saved to: " .. output_file)
+    return true
+end
+
+local function handle_config(args, verbose)
+    if #args < 1 then
+        print_error("Missing output file")
+        print_info("Usage: " .. COMMANDS.config.usage)
+        return false
+    end
+    
+    local output_file = args[1]
+    local preset = "default"
+    
+    local i = 2
+    while i <= #args do
+        if args[i]:match("^%-%-preset=") then
+            preset = args[i]:match("^%-%-preset=(.+)$")
+        end
+        i = i + 1
+    end
+    
+    print_verbose("Creating formatter configuration with preset: " .. preset, verbose)
+    
+    local config
+    if formatter.PRESETS and formatter.PRESETS[preset] then
+        config = formatter.PRESETS[preset]
+    else
+        config = formatter.DEFAULT_CONFIG
+    end
+
+    if not config then
+        print_error("Invalid preset: " .. preset)
+        print_info("Available presets: default, compact, expanded, minify")
+        return false
+    end
+    
+    print_verbose("Writing config to: " .. output_file, verbose)
+    local success, err = formatter_config.save(config, output_file)
+    
+    if not success then
+        print_error("Failed to write config file: " .. tostring(err))
+        return false
+    end
+    
+    print_success("Formatter configuration saved to: " .. output_file)
+    return true
+end
+
 local function handle_version()
     print_info("NexusScripts Lua Parser v1.0")
     print_info("Developed by NexusScripts")
@@ -363,18 +514,36 @@ local function handle_help(args)
         print_info("  lua cli.lua <input_file>                      # Directly parse a file with default settings (creates a .lua output file containing both the AST and tokens as Lua tables)")
         
         print_info("\nExamples:")
-        print_info("  lua cli.lua parse input.lua                         # Directly parse file with default settings")
-        print_info("  lua cli.lua parse input.lua                   # Parse and output to input.lua.output.lua")
+        print_info("  lua cli.lua parse input.lua                         # Parse and output to input.lua.output.lua")
         print_info("  lua cli.lua parse input.lua output.json --format=json    # Parse and output JSON")
         print_info("  lua cli.lua parse input.lua --output=tokens             # Output only tokens")
-        print_info("  lua cli.lua parse input.lua --output=both              # Output both AST and tokens")
-        print_info("  lua cli.lua parse input.lua output.lua --verbose        # Enable verbose output")
+        print_info("  lua cli.lua format input.lua                        # Format with default style")
+        print_info("  lua cli.lua format input.lua --style=compact         # Format with compact style")
+        print_info("  lua cli.lua format input.lua --style=minify          # Minify the code")
+        print_info("  lua cli.lua config formatter.conf --preset=expanded   # Create config file with expanded preset")
+        print_info("  lua cli.lua format input.lua --config=formatter.conf   # Format using custom config")
     else
         local cmd_name = args[1]
         local cmd_info = COMMANDS[cmd_name]
         if cmd_info then
             print_info(cmd_name .. " - " .. cmd_info.desc)
             print_info("Usage: " .. cmd_info.usage)
+            
+            if cmd_name == "format" then
+                print_info("\nFormat Options:")
+                print_info("  --style=<style>       Set formatting style (default, compact, expanded, minify)")
+                print_info("  --config=<file>       Use custom configuration file")
+                print_info("  --debug-ast           Print AST structure to console for debugging")
+                print_info("  --verbose             Show detailed information during formatting")
+            elseif cmd_name == "parse" then
+                print_info("\nParse Options:")
+                print_info("  --format=<format>     Output format (json, lua)")
+                print_info("  --output=<type>       What to output (ast, tokens, both)")
+                print_info("  --verbose             Show detailed information during parsing")
+            elseif cmd_name == "config" then
+                print_info("\nConfig Options:")
+                print_info("  --preset=<preset>     Which preset to use (default, compact, expanded, minify)")
+            end
         else
             print_error("Unknown command: " .. cmd_name)
             return false
@@ -405,6 +574,10 @@ function cli.run(args)
     
     if command == "parse" then
         return handle_parse(args, verbose)
+    elseif command == "format" then
+        return handle_format(args, verbose)
+    elseif command == "config" then
+        return handle_config(args, verbose)
     elseif command == "version" then
         return handle_version()
     elseif command == "help" then

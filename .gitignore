@@ -1,24 +1,9 @@
 /ast tests/
 /ast_tests/
 changelog.lua
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*.o
-*.so
-*.a
-luac.out
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
 /lua_modules/
 /luarocks/ 
-working_on.txt
+working_on.md
 test_simple.lua.output.lua
 test_simple.lua
 simple_script.lua
