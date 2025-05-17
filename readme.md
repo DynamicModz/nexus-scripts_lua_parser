@@ -114,6 +114,9 @@ end
   - Attached to relevant AST nodes based on position
   - Preserved as leading/trailing associations
   - Available in both Lua table and JSON output formats
+  - Fixed handling of file-level comments at the top of scripts
+  - Improved comment attachment logic to prevent duplication
+  - Proper handling of comments after shebangs
 
 ### AST Nodes Improvements
 - Add source location information to all nodes

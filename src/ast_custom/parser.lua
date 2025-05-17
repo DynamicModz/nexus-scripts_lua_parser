@@ -198,6 +198,15 @@ local function attach_comments_to_node(node, leading_comments, trailing_comments
         end
         
         for _, comment in ipairs(leading_comments) do
+            for i, globalComment in ipairs(comments) do
+                if globalComment.line == comment.line and 
+                   globalComment.col == comment.col and 
+                   globalComment.value == comment.value then
+                    attached_comments[i] = true
+                    break
+                end
+            end
+            
             table.insert(node.comments.leading, comment)
         end
     end
@@ -208,6 +217,15 @@ local function attach_comments_to_node(node, leading_comments, trailing_comments
         end
         
         for _, comment in ipairs(trailing_comments) do
+            for i, globalComment in ipairs(comments) do
+                if globalComment.line == comment.line and 
+                   globalComment.col == comment.col and 
+                   globalComment.value == comment.value then
+                    attached_comments[i] = true
+                    break
+                end
+            end
+            
             table.insert(node.comments.trailing, comment)
         end
     end
@@ -223,8 +241,23 @@ local function find_comments_before(token_idx)
             local token_pos = tokens[token_idx].line * 10000 + tokens[token_idx].col
             
             if comment_pos < token_pos then
-                table.insert(result, comment)
-                attached_comments[i] = true
+
+                local closer_to_previous = false
+                if token_idx > 1 then
+                    local prev_token_pos = tokens[token_idx-1].line * 10000 + tokens[token_idx-1].col
+                    local dist_to_current = token_pos - comment_pos
+                    local dist_to_previous = comment_pos - prev_token_pos
+
+                    if comment.line == tokens[token_idx-1].line and comment.line ~= tokens[token_idx].line and 
+                       dist_to_previous < dist_to_current then
+                        closer_to_previous = true
+                    end
+                end
+                
+                if not closer_to_previous then
+                    table.insert(result, comment)
+                    attached_comments[i] = true
+                end
             end
         end
     end
@@ -248,7 +281,13 @@ local function find_comments_after(token_idx)
             local next_token_pos = next_token.line * 10000 + next_token.col
             
             if comment_pos > this_token_pos and comment_pos < next_token_pos then
-                if comment.line == this_token.line then
+                
+                local dist_after_this = comment_pos - this_token_pos
+                local dist_before_next = next_token_pos - comment_pos
+                
+                if comment.line == this_token.line or 
+                   dist_after_this <= dist_before_next or 
+                   (comment.line == this_token.line + 1 and next_token.line ~= comment.line) then
                     table.insert(result, comment)
                     attached_comments[i] = true
                 end
@@ -265,7 +304,56 @@ local function attach_comments(node, start_token_idx, end_token_idx)
     local leading_comments = find_comments_before(start_token_idx)
     local trailing_comments = find_comments_after(end_token_idx or start_token_idx)
     
-    attach_comments_to_node(node, leading_comments, trailing_comments)
+    local grouped_leading = {}
+    local current_group = {}
+    local last_line = -1
+    
+    for i, comment in ipairs(leading_comments) do
+        if last_line == -1 or comment.line <= last_line + 1 then
+            table.insert(current_group, comment)
+        else
+            if #current_group > 0 then
+                table.insert(grouped_leading, current_group)
+            end
+            current_group = {comment}
+        end
+        last_line = comment.line
+    end
+    
+    if #current_group > 0 then
+        table.insert(grouped_leading, current_group)
+    end
+    
+    if #grouped_leading > 0 then
+        local node_comments = {}
+        for i, group in ipairs(grouped_leading) do
+            local is_block_comment = false
+            for _, comment in ipairs(group) do
+                if comment.raw and comment.raw:match("^%-%-[%[=*%[]") then
+                    is_block_comment = true
+                    break
+                end
+            end
+            
+            local token_line = tokens[start_token_idx].line
+            local last_comment_line = group[#group].line
+            local significant_gap = token_line - last_comment_line > 1
+            
+            if is_block_comment or significant_gap then
+                for _, comment in ipairs(group) do
+                    table.insert(node_comments, comment)
+                end
+            end
+        end
+        
+        if #node_comments > 0 then
+            attach_comments_to_node(node, node_comments, {})
+        end
+    end
+    
+    if #trailing_comments > 0 then
+        attach_comments_to_node(node, {}, trailing_comments)
+    end
     
     return node
 end
@@ -1401,13 +1489,25 @@ function parser.parse(code)
     errors = {}
     attached_comments = {}
     
+    local has_shebang = false
     if current_token and current_token.type == lexer.TOKEN_TYPES.SHEBANG then
+        has_shebang = true
         next_token()
     end
     
-    local body = parse_block()
+    local file_level_comments = {}
+    local first_code_line = tokens[current_token_idx] and tokens[current_token_idx].line
     
-    local ast = ast_nodes.Chunk(body, comments)
+    for i, comment in ipairs(comments) do
+        if (i == 1) or
+           (first_code_line and comment.line < first_code_line)
+        then
+            table.insert(file_level_comments, comment)
+            attached_comments[i] = true
+        end
+    end
+    
+    local body = parse_block()
     
     local unattached_comments = {}
     for i, comment in ipairs(comments) do
@@ -1415,8 +1515,82 @@ function parser.parse(code)
             table.insert(unattached_comments, comment)
         end
     end
+    
+    local ast = ast_nodes.Chunk(body, {})
+    
+    if #file_level_comments > 0 then
+        ast.comments = file_level_comments
+    end
+    
+    table.sort(unattached_comments, function(a, b)
+        return (a.line * 10000 + a.col) < (b.line * 10000 + b.col)
+    end)
+    
+    if #unattached_comments > 0 and #body > 0 then
+        local first_stmt = body[1]
+        local first_stmt_loc = first_stmt.loc and first_stmt.loc.start
+        local leading_comments = {}
+        
+        local i = 1
+        while i <= #unattached_comments do
+            local comment = unattached_comments[i]
+            if first_stmt_loc and comment.line < first_stmt_loc.line then
+                table.insert(leading_comments, comment)
+                table.remove(unattached_comments, i)
+            else
+                i = i + 1
+            end
+        end
+        
+        if #leading_comments > 0 then
+            if not first_stmt.comments then first_stmt.comments = {} end
+            if not first_stmt.comments.leading then first_stmt.comments.leading = {} end
+            for _, comment in ipairs(leading_comments) do
+                table.insert(first_stmt.comments.leading, comment)
+            end
+        end
+        
+        for i = 1, #body do
+            local stmt = body[i]
+            local next_stmt = body[i+1]
+            local stmt_end_loc = stmt.loc and stmt.loc["end"]
+            local next_stmt_start_loc = next_stmt and next_stmt.loc and next_stmt.loc.start
+            
+            if stmt_end_loc then
+                local stmt_trailing = {}
+                local j = 1
+                while j <= #unattached_comments do
+                    local comment = unattached_comments[j]
+                    local comment_pos = comment.line * 10000 + comment.col
+                    local stmt_end_pos = stmt_end_loc.line * 10000 + stmt_end_loc.col
+                    
+                    if comment_pos > stmt_end_pos and 
+                       (not next_stmt_start_loc or 
+                        comment.line < next_stmt_start_loc.line or
+                        (comment.line == next_stmt_start_loc.line and comment.col < next_stmt_start_loc.col)) then
+                        table.insert(stmt_trailing, comment)
+                        table.remove(unattached_comments, j)
+                    else
+                        j = j + 1
+                    end
+                end
+                
+                if #stmt_trailing > 0 then
+                    if not stmt.comments then stmt.comments = {} end
+                    if not stmt.comments.trailing then stmt.comments.trailing = {} end
+                    for _, comment in ipairs(stmt_trailing) do
+                        table.insert(stmt.comments.trailing, comment)
+                    end
+                end
+            end
+        end
+    end
+    
     if #unattached_comments > 0 then
-        attach_comments_to_node(ast, unattached_comments, {})
+        if not ast.comments then ast.comments = {} end
+        for _, comment in ipairs(unattached_comments) do
+            table.insert(ast.comments, comment)
+        end
     end
     
     return ast, errors
