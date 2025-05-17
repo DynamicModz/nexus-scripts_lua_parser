@@ -16,12 +16,10 @@ The NexusScripts Parser Module consists of three main components that work toget
 The lexer tokenizes Lua source code, breaking it down into meaningful tokens for the parser.
 
 **Current Features:**
-- Full Lua 5.x syntax support including Lua 5.3/5.4 features
-- Hexadecimal floating-point literals (e.g., `0x1.921fb54442d18p+1`)
-- Binary literals (`0b101010`)
+- Full Lua 5.x syntax support including:
+  - **Lua 5.3 features**: Binary literals (`0b101010`), hexadecimal floating-point literals (`0x1.8p3`), UTF-8 string literals (`\u{1F680}`), bitwise operators (`&`, `|`, `~`, `<<`, `>>`), integer division (`//`)
+  - **Lua 5.4 features**: Variable attributes (`<const>`, `<close>`, `<toclose>`)
 - Comprehensive token types for all Lua operators and keywords
-- Support for bitwise operators (`&`, `|`, `~`, `<<`, `>>`)
-- Integer division (`//`)
 - String literals with escape sequences
 - Multi-line strings with long brackets (`[[...]]`)
 - Numeric literals (decimal, hexadecimal, binary)
@@ -40,16 +38,21 @@ The parser converts tokens into an Abstract Syntax Tree (AST) representation.
   - Control structures (if, while, for, repeat, etc.)
   - Table constructors
   - Expressions (binary, unary, literals, etc.)
+- Support for Lua language features:
+  - **Lua 5.3**: Binary literals, hexadecimal floating points, UTF-8 strings, bitwise operations, integer division
+  - **Lua 5.4**: Variable attributes (`<const>`, `<close>`, `<toclose>`), alternative attributes
 - Error reporting with line and column information
-- Support for Lua 5.3/5.4 language features
 
 ### 3. AST Nodes (`ast_nodes.lua`)
 
 The AST node module defines the structure for each type of node in the Abstract Syntax Tree.
 
 **Current Features:**
-- Node types for Lua syntax elements
-- Support for parsing Lua 5.3/5.4 specific features
+- Node types for all Lua syntax elements
+- Specialized support for Lua 5.3/5.4 features:
+  - Flags for Lua 5.3 features (binary literals, hex float literals, UTF-8 strings, bitwise operations)
+  - Support for Lua 5.4 variable attributes
+- Comprehensive source location tracking
 - Program structure, statements, expressions, and literals
 
 ## CLI Tool
