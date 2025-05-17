@@ -79,25 +79,6 @@ lua src/cli.lua parse input.lua tokens_only.lua --output=tokens
 lua src/cli.lua parse input.lua --verbose
 ```
 
-## Current Usage
-
-```lua
--- Parsing a Lua file
-local parser = require("ast_custom.parser")
-local ast, errors = parser.parse(source_code)
-
--- Check for parsing errors
-if #errors > 0 then
-    for _, err in ipairs(errors) do
-        print(string.format("Error: %s at line %d, column %d", 
-              err.message, err.line, err.col))
-    end
-else
-    -- Process the AST
-    -- ...
-end
-```
-
 ## Planned Improvements
 
 ### Lexer Improvements
@@ -108,7 +89,13 @@ end
 ### Parser Improvements
 - More robust error recovery strategies
 - Add scope analysis for variables
-- Improved handling of complex expressions
+
+- ✅ Improved handling of complex expressions
+  - Expression depth tracking to prevent stack overflow
+  - Enhanced error reporting with contextual information
+  - Support for deeply nested structures with mixed operator precedence
+  - Graceful handling of pathologically complex inputs
+
 - ✅ Support for comments as part of the AST
   - Comments are preserved with source location information
   - Attached to relevant AST nodes based on position

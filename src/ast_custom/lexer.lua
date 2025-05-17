@@ -49,8 +49,6 @@ lexer.TOKEN_TYPES = {
     VARARG = "VARARG",
     ATTR_CONST = "ATTR_CONST",
     ATTR_CLOSE = "ATTR_CLOSE",
-    LT_SYMBOL = "LT_SYMBOL",
-    GT_SYMBOL = "GT_SYMBOL",
     COMMENT = "COMMENT",
     SHEBANG = "SHEBANG",
     EOF = "EOF"
@@ -1200,7 +1198,7 @@ function lexer.tokenize(code)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT_SYMBOL, "<", line, col, "<"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT, "<", line, col, "<"))
                 pos = pos + 1
                 col = col + 1
             end
@@ -1214,7 +1212,7 @@ function lexer.tokenize(code)
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT_SYMBOL, ">", line, col, ">"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT, ">", line, col, ">"))
                 pos = pos + 1
                 col = col + 1
             end

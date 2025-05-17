@@ -24,19 +24,26 @@ local parse_expression, parse_expression_list
 local parse_variable_list, parse_block, parse_statement
 local parse_function_expression
 
-local function add_error(message, token)
+local function add_error(message, token, context)
     local line = token and token.line or 0
     local col = token and token.col or 0
-    print("PARSER ERROR: " .. message .. " at line " .. line .. ", col " .. col)
+    
+    local error_message = message
+    if context then
+        error_message = message .. " (in " .. context .. ")"
+    end
+    
+    print("PARSER ERROR: " .. error_message .. " at line " .. line .. ", col " .. col)
     
     table.insert(errors, {
-        message = message,
+        message = error_message,
         line = line,
         col = col,
-        token = token
+        token = token,
+        context = context
     })
     
-    return ast_nodes.createErrorNode(message, token)
+    return ast_nodes.createErrorNode(error_message, token)
 end
 
 local function recover_from_error(expected_token_type, recovery_strategy)
@@ -140,7 +147,7 @@ local function match(type)
     return current_token and current_token.type == type
 end
 
-local function consume(type, error_message, recovery_strategy)
+local function consume(type, error_message, context, recovery_strategy)
     if match(type) then
         local token = current_token
         next_token()
@@ -151,7 +158,7 @@ local function consume(type, error_message, recovery_strategy)
         if recovery_strategy then
             recover_from_error(type, recovery_strategy)
         else
-            add_error(error_message, current_token)
+            add_error(error_message, current_token, context)
         end
     end
     return nil
@@ -367,25 +374,31 @@ parse_identifier = function()
         local token_start = token
         local token_end = token
         
-        if match(lexer.TOKEN_TYPES.LT_SYMBOL) then
-            local lt_token = current_token
-            consume(lexer.TOKEN_TYPES.LT_SYMBOL)
-            
-            if match(lexer.TOKEN_TYPES.ATTR_CONST) then
-                attributes.const = true
-                consume(lexer.TOKEN_TYPES.ATTR_CONST)
-            elseif match(lexer.TOKEN_TYPES.ATTR_CLOSE) then
-                attributes.close = true
-                consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
-            else
-                add_error("Expected 'const' or 'close' after '<'", current_token)
-            end
-            
-            if match(lexer.TOKEN_TYPES.GT_SYMBOL) then
-                token_end = current_token
-                consume(lexer.TOKEN_TYPES.GT_SYMBOL)
-            else
-                add_error("Expected '>' to close attribute", current_token)
+        if match(lexer.TOKEN_TYPES.LT) then
+            local next_idx = current_token_idx + 1
+            if next_idx <= #tokens and 
+               (tokens[next_idx].type == lexer.TOKEN_TYPES.ATTR_CONST or 
+                tokens[next_idx].type == lexer.TOKEN_TYPES.ATTR_CLOSE) then
+                
+                local lt_token = current_token
+                consume(lexer.TOKEN_TYPES.LT)
+                
+                if match(lexer.TOKEN_TYPES.ATTR_CONST) then
+                    attributes.const = true
+                    consume(lexer.TOKEN_TYPES.ATTR_CONST)
+                elseif match(lexer.TOKEN_TYPES.ATTR_CLOSE) then
+                    attributes.close = true
+                    consume(lexer.TOKEN_TYPES.ATTR_CLOSE)
+                else
+                    add_error("Expected 'const' or 'close' after '<'", current_token)
+                end
+                
+                if match(lexer.TOKEN_TYPES.GT) then
+                    token_end = current_token
+                    consume(lexer.TOKEN_TYPES.GT)
+                else
+                    add_error("Expected '>' to close attribute", current_token)
+                end
             end
         end
         
@@ -419,7 +432,10 @@ parse_literal = function()
     return nil
 end
 
-parse_table_constructor = function()
+parse_table_constructor = function(depth, context)
+    depth = depth or 0
+    context = context or "table constructor"
+    
     if not match(lexer.TOKEN_TYPES.LBRACE) then
         return nil
     end
@@ -430,18 +446,18 @@ parse_table_constructor = function()
     while not match(lexer.TOKEN_TYPES.RBRACE) and not match(lexer.TOKEN_TYPES.EOF) do
         if match(lexer.TOKEN_TYPES.LBRACKET) then
             consume(lexer.TOKEN_TYPES.LBRACKET)
-            local key = parse_expression()
-            consume(lexer.TOKEN_TYPES.RBRACKET, "Expected ']' after table key expression")
-            consume(lexer.TOKEN_TYPES.ASSIGN, "Expected '=' after table key")
-            local value = parse_expression()
+            local key = parse_expression(depth + 1, "table key")
+            consume(lexer.TOKEN_TYPES.RBRACKET, "Expected ']' after table key expression", context)
+            consume(lexer.TOKEN_TYPES.ASSIGN, "Expected '=' after table key", context)
+            local value = parse_expression(depth + 1, "table value")
             table.insert(fields, ast_nodes.TableKey(key, value))
         elseif match(lexer.TOKEN_TYPES.IDENTIFIER) and current_token_idx + 1 <= #tokens and tokens[current_token_idx + 1].type == lexer.TOKEN_TYPES.ASSIGN then
             local key = parse_identifier()
             consume(lexer.TOKEN_TYPES.ASSIGN)
-            local value = parse_expression()
+            local value = parse_expression(depth + 1, "table field value")
             table.insert(fields, ast_nodes.TableKeyString(key, value))
         else
-            local value = parse_expression()
+            local value = parse_expression(depth + 1, "table value")
             if value then
                 table.insert(fields, ast_nodes.TableValue(value))
             else
@@ -456,12 +472,13 @@ parse_table_constructor = function()
         end
     end
     
-    consume(lexer.TOKEN_TYPES.RBRACE, "Expected '}' to close table constructor")
+    consume(lexer.TOKEN_TYPES.RBRACE, "Expected '}' to close table constructor", context)
     
     return ast_nodes.TableConstructorExpression(fields)
 end
 
-parse_function_call = function(base)
+parse_function_call = function(base, depth)
+    depth = depth or 0
     local arguments = {}
     
     if match(lexer.TOKEN_TYPES.LPAREN) then
@@ -469,7 +486,7 @@ parse_function_call = function(base)
         
         if not match(lexer.TOKEN_TYPES.RPAREN) then
             while true do
-                local arg = parse_expression()
+                local arg = parse_expression(depth + 1)
                 if arg then
                     table.insert(arguments, arg)
                 else
@@ -487,21 +504,28 @@ parse_function_call = function(base)
         
         consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' to close function call arguments")
         
-        return ast_nodes.CallExpression(base, arguments)
+        local expr = ast_nodes.CallExpression(base, arguments)
+        expr.expression_depth = depth
+        return expr
     elseif match(lexer.TOKEN_TYPES.STRING) then
         local arg = parse_literal()
         table.insert(arguments, arg)
-        return ast_nodes.CallExpression(base, arguments)
+        local expr = ast_nodes.CallExpression(base, arguments)
+        expr.expression_depth = depth
+        return expr
     elseif match(lexer.TOKEN_TYPES.LBRACE) then
-        local arg = parse_table_constructor()
+        local arg = parse_table_constructor(depth + 1)
         table.insert(arguments, arg)
-        return ast_nodes.CallExpression(base, arguments)
+        local expr = ast_nodes.CallExpression(base, arguments)
+        expr.expression_depth = depth
+        return expr
     end
     
     return nil
 end
 
-parse_method_call = function(base)
+parse_method_call = function(base, depth)
+    depth = depth or 0
     if not match(lexer.TOKEN_TYPES.COLON) then
         return nil
     end
@@ -520,7 +544,7 @@ parse_method_call = function(base)
         
         if not match(lexer.TOKEN_TYPES.RPAREN) then
             while true do
-                local arg = parse_expression()
+                local arg = parse_expression(depth + 1)
                 if arg then
                     table.insert(arguments, arg)
                 else
@@ -541,14 +565,16 @@ parse_method_call = function(base)
         local arg = parse_literal()
         table.insert(arguments, arg)
     elseif match(lexer.TOKEN_TYPES.LBRACE) then
-        local arg = parse_table_constructor()
+        local arg = parse_table_constructor(depth + 1)
         table.insert(arguments, arg)
     else
         add_error("Expected arguments after method name", current_token)
         return nil
     end
     
-    return ast_nodes.MethodCallExpression(base, method, arguments)
+    local expr = ast_nodes.MethodCallExpression(base, method, arguments)
+    expr.expression_depth = depth
+    return expr
 end
 
 parse_member_expression = function(base)
@@ -574,11 +600,14 @@ parse_member_expression = function(base)
     return nil
 end
 
-parse_primary_expression = function()
+parse_primary_expression = function(depth, context)
+    depth = depth or 0
+    context = context or "expression"
+    
     if match(lexer.TOKEN_TYPES.LPAREN) then
         consume(lexer.TOKEN_TYPES.LPAREN)
-        local expr = parse_expression()
-        consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' to close grouped expression")
+        local expr = parse_expression(depth + 1, "parenthesized expression")
+        consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' to close grouped expression", context)
         return expr
     end
     
@@ -587,21 +616,23 @@ parse_primary_expression = function()
     end
     
     if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function" then
-        return parse_function_expression()
+        return parse_function_expression(depth + 1, "anonymous function")
     end
     
-    return parse_literal() or parse_table_constructor()
+    return parse_literal() or parse_table_constructor(depth + 1, context)
 end
 
-parse_postfix_expression = function()
-    local expr = parse_primary_expression()
+parse_postfix_expression = function(depth)
+    depth = depth or 0
+    
+    local expr = parse_primary_expression(depth)
     
     if not expr then
         return nil
     end
     
     while true do
-        local new_expr = parse_function_call(expr) or parse_method_call(expr) or parse_member_expression(expr)
+        local new_expr = parse_function_call(expr, depth) or parse_method_call(expr, depth) or parse_member_expression(expr)
         
         if not new_expr then
             break
@@ -613,7 +644,10 @@ parse_postfix_expression = function()
     return expr
 end
 
-parse_unary_expression = function()
+parse_unary_expression = function(depth, context)
+    depth = depth or 0
+    context = context or "expression"
+    
     if match(lexer.TOKEN_TYPES.SUB) or 
        (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "not") or
        match(lexer.TOKEN_TYPES.LEN) or
@@ -636,14 +670,14 @@ parse_unary_expression = function()
             consume(lexer.TOKEN_TYPES.BXOR)
         end
         
-        local argument = parse_postfix_expression()
+        local argument = parse_postfix_expression(depth + 1)
         if not argument then
             if match(lexer.TOKEN_TYPES.STRING) or match(lexer.TOKEN_TYPES.NUMBER) or 
                match(lexer.TOKEN_TYPES.TRUE) or match(lexer.TOKEN_TYPES.FALSE) or 
                match(lexer.TOKEN_TYPES.NIL) or match(lexer.TOKEN_TYPES.IDENTIFIER) then
                 argument = parse_primary_expression()
             else
-                add_error("Expected expression after unary operator '" .. operator .. "'", token)
+                add_error("Expected expression after unary operator '" .. operator .. "'", token, context)
                 
                 if match(lexer.TOKEN_TYPES.IDENTIFIER) then
                     argument = parse_identifier()
@@ -658,10 +692,12 @@ parse_unary_expression = function()
             end
         end
         
-        return ast_nodes.UnaryExpression(operator, argument, token)
+        local expr = ast_nodes.UnaryExpression(operator, argument, token)
+        expr.expression_depth = depth
+        return expr
     end
     
-    return parse_postfix_expression()
+    return parse_postfix_expression(depth)
 end
 
 local BINARY_OPS = {
@@ -688,10 +724,17 @@ local BINARY_OPS = {
     ['or'] = { precedence = 1 }
 }
 
-parse_binary_expression = function(min_precedence)
+parse_binary_expression = function(min_precedence, depth, context)
     min_precedence = min_precedence or 0
+    depth = depth or 0
+    context = context or "expression"
     
-    local left = parse_unary_expression()
+    if depth > 1000 then
+        add_error("Expression too complex (nesting level > 1000)", current_token, context)
+        return ast_nodes.createErrorNode("Expression too complex", current_token)
+    end
+    
+    local left = parse_unary_expression(depth + 1, context)
     if not left then
         return nil
     end
@@ -756,14 +799,15 @@ parse_binary_expression = function(min_precedence)
             next_min_precedence = next_min_precedence + 1
         end
         
-        local right = parse_binary_expression(next_min_precedence)
+        local right = parse_binary_expression(next_min_precedence, depth + 1, "right side of " .. op)
         if not right then
-            add_error("Expected expression after operator '" .. op .. "'", op_token)
+            add_error("Expected expression after operator '" .. op .. "'", op_token, context)
             
             right = ast_nodes.createErrorNode("Missing right operand", op_token)
         end
         
         local binary_expr = ast_nodes.BinaryExpression(op, left, right)
+        binary_expr.expression_depth = depth
         
         if op == '&' or op == '|' or op == '~' or op == '<<' or op == '>>' or op == '//' then
             binary_expr.lua53_feature = true
@@ -775,17 +819,21 @@ parse_binary_expression = function(min_precedence)
     return left
 end
 
-parse_expression = function()
-    return parse_binary_expression()
+parse_expression = function(depth, context)
+    depth = depth or 0
+    context = context or "expression"
+    return parse_binary_expression(0, depth, context)
 end
 
-parse_expression_list = function()
+parse_expression_list = function(depth, context)
+    depth = depth or 0
+    context = context or "expression list"
     local expressions = {}
     
     while true do
-        local expr = parse_expression()
+        local expr = parse_expression(depth + 1, context)
         if not expr then
-            add_error("Expected expression", current_token)
+            add_error("Expected expression", current_token, context)
             break
         end
         
@@ -1024,7 +1072,7 @@ parse_for_statement = function()
                 consume(lexer.TOKEN_TYPES.KEYWORD)
             end
             
-            local iterators = parse_expression_list()
+            local iterators = parse_expression_list(depth + 1)
             
             if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "do") then
                 add_error("Expected 'do' after for loop parameters", current_token)
@@ -1284,7 +1332,7 @@ parse_return_statement = function()
              current_token.value == "else" or
              current_token.value == "elseif" or
              current_token.value == "until")) then
-        arguments = parse_expression_list()
+        arguments = parse_expression_list(0)
     end
     
     if match(lexer.TOKEN_TYPES.SEMI) then
@@ -1399,13 +1447,16 @@ parse_statement = function()
            parse_assignment_or_call()
 end
 
-parse_function_expression = function()
+parse_function_expression = function(depth, context)
+    depth = depth or 0
+    context = context or "anonymous function"
+    
     if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function" then
         consume(lexer.TOKEN_TYPES.KEYWORD)
         
         local parameters = {}
         
-        consume(lexer.TOKEN_TYPES.LPAREN, "Expected '(' after 'function'")
+        consume(lexer.TOKEN_TYPES.LPAREN, "Expected '(' after 'function'", context)
         
         if not match(lexer.TOKEN_TYPES.RPAREN) then
             while true do
@@ -1417,7 +1468,7 @@ parse_function_expression = function()
                     table.insert(parameters, parse_identifier())
                 else
                     if not match(lexer.TOKEN_TYPES.RPAREN) then
-                        add_error("Expected parameter name or '...'", current_token)
+                        add_error("Expected parameter name or '...'", current_token, context)
                     end
                     break
                 end
@@ -1430,12 +1481,12 @@ parse_function_expression = function()
             end
         end
         
-        consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' after parameter list")
+        consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' after parameter list", context)
         
         local body = parse_block()
         
         if not match(lexer.TOKEN_TYPES.KEYWORD) or current_token.value ~= "end" then
-            add_error("Expected 'end' to close function body", current_token)
+            add_error("Expected 'end' to close function body", current_token, context)
         else
             consume(lexer.TOKEN_TYPES.KEYWORD)
         end
