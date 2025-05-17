@@ -62,8 +62,8 @@ end
 
 function ast_nodes.Chunk(body, comments, token_start, token_end)
     return with_location({ 
-        type = "Chunk", 
-        body = body or {}, 
+        type = "Chunk",
+        body = body or {},
         comments = comments or {} 
     }, token_start, token_end)
 end
@@ -239,11 +239,10 @@ function ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
     local is_lua53_feature = (operator == "~") 
     
     return with_location({ 
-        type = "UnaryExpression", 
-        operator = operator, 
+        type = "UnaryExpression",
+        operator = operator,
         argument = argument,
-        potential_metamethod = metamethod,
-        has_metamethod = metamethod ~= nil,
+        metamethod = metamethod,
         is_lua53_feature = is_lua53_feature
     }, token_start, token_end)
 end
@@ -253,42 +252,15 @@ function ast_nodes.BinaryExpression(operator, left, right, token_start, token_en
     
     local substituted_operator = operator
     local swap_operands = false
-    local negate_result = false
     
-    if operator == ">" then
-        substituted_operator = "<"
-        metamethod = OP_TO_METAMETHOD["<"]
-        swap_operands = true
-    elseif operator == ">=" then
-        substituted_operator = "<="  
-        metamethod = OP_TO_METAMETHOD["<="]
-        swap_operands = true
-    elseif operator == "~=" then
-        substituted_operator = "=="
-        metamethod = OP_TO_METAMETHOD["=="]
-        negate_result = true
-    end
-    
-    local is_lua53_feature = false
-    if operator == "&" or operator == "|" or 
-       operator == "~" or operator == "<<" or 
-       operator == ">>" or operator == "//" then
-        is_lua53_feature = true
-    end
-    
-    return with_location({
+    return with_location({ 
         type = "BinaryExpression",
         operator = operator,
+        left = left,
+        right = right,
+        metamethod = metamethod,
         substituted_operator = substituted_operator,
-        original_left = left,
-        original_right = right,
-        left = swap_operands and right or left,
-        right = swap_operands and left or right,
-        potential_metamethod = metamethod,
-        has_metamethod = metamethod ~= nil,
-        swap_operands = swap_operands,
-        negate_result = negate_result,
-        is_lua53_feature = is_lua53_feature
+        swap_operands = swap_operands
     }, token_start, token_end)
 end
 

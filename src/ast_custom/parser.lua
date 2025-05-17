@@ -525,84 +525,6 @@ parse_postfix_expression = function()
     return expr
 end
 
-parse_function_expression = function()
-    if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function") then
-        return nil
-    end
-    
-    consume(lexer.TOKEN_TYPES.KEYWORD)
-    
-    local parameters = {}
-    
-    consume(lexer.TOKEN_TYPES.LPAREN, "Expected '(' after 'function'")
-    
-    if not match(lexer.TOKEN_TYPES.RPAREN) then
-        while true do
-            if match(lexer.TOKEN_TYPES.VARARG) then
-                table.insert(parameters, ast_nodes.VarargExpression())
-                consume(lexer.TOKEN_TYPES.VARARG)
-                break
-            elseif match(lexer.TOKEN_TYPES.IDENTIFIER) then
-                table.insert(parameters, parse_identifier())
-            else
-                add_error("Expected parameter name or '...'", current_token)
-                break
-            end
-            
-            if match(lexer.TOKEN_TYPES.COMMA) then
-                consume(lexer.TOKEN_TYPES.COMMA)
-            else
-                break
-            end
-        end
-    end
-    
-    consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' after parameter list")
-    
-    local body = parse_block()
-    
-    if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end" then
-        consume(lexer.TOKEN_TYPES.KEYWORD)
-    else
-        add_error("Expected 'end' to close function body", current_token)
-    end
-    
-    return ast_nodes.FunctionExpression(parameters, body)
-end
-
-parse_block = function()
-    local statements = {}
-    local had_error = false
-    
-    while not match(lexer.TOKEN_TYPES.EOF) and
-          not (match(lexer.TOKEN_TYPES.KEYWORD) and 
-               (current_token.value == "end" or
-                current_token.value == "else" or
-                current_token.value == "elseif" or
-                current_token.value == "until")) do
-        
-        local stmt = parse_statement()
-        if stmt then
-            if stmt.isError then
-                had_error = true
-                synchronize()
-            else
-                table.insert(statements, stmt)
-            end
-        else
-            if current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF then
-                had_error = true
-                add_error("Unexpected token in block", current_token)
-                synchronize()
-            else
-                break
-            end
-        end
-    end
-    
-    return statements
-end
-
 parse_unary_expression = function()
     if match(lexer.TOKEN_TYPES.SUB) or 
        (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "not") or
@@ -610,6 +532,8 @@ parse_unary_expression = function()
        match(lexer.TOKEN_TYPES.BXOR) then
         
         local operator
+        local token = current_token
+        
         if match(lexer.TOKEN_TYPES.SUB) then
             operator = "-"
             consume(lexer.TOKEN_TYPES.SUB)
@@ -624,13 +548,29 @@ parse_unary_expression = function()
             consume(lexer.TOKEN_TYPES.BXOR)
         end
         
-        local argument = parse_unary_expression()
+        local argument = parse_postfix_expression()
         if not argument then
-            add_error("Expected expression after unary operator '" .. operator .. "'", current_token)
-            return nil
+            if match(lexer.TOKEN_TYPES.STRING) or match(lexer.TOKEN_TYPES.NUMBER) or 
+               match(lexer.TOKEN_TYPES.TRUE) or match(lexer.TOKEN_TYPES.FALSE) or 
+               match(lexer.TOKEN_TYPES.NIL) or match(lexer.TOKEN_TYPES.IDENTIFIER) then
+                argument = parse_primary_expression()
+            else
+                add_error("Expected expression after unary operator '" .. operator .. "'", token)
+                
+                if match(lexer.TOKEN_TYPES.IDENTIFIER) then
+                    argument = parse_identifier()
+                elseif match(lexer.TOKEN_TYPES.LPAREN) then
+                    consume(lexer.TOKEN_TYPES.LPAREN)
+                    argument = parse_expression()
+                    consume(lexer.TOKEN_TYPES.RPAREN)
+                else
+                    argument = ast_nodes.LiteralExpression(0, "0")
+                    next_token()
+                end
+            end
         end
         
-        return ast_nodes.UnaryExpression(operator, argument)
+        return ast_nodes.UnaryExpression(operator, argument, token)
     end
     
     return parse_postfix_expression()
@@ -1371,12 +1311,99 @@ parse_statement = function()
            parse_assignment_or_call()
 end
 
+parse_function_expression = function()
+    if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function" then
+        consume(lexer.TOKEN_TYPES.KEYWORD)
+        
+        local parameters = {}
+        
+        consume(lexer.TOKEN_TYPES.LPAREN, "Expected '(' after 'function'")
+        
+        if not match(lexer.TOKEN_TYPES.RPAREN) then
+            while true do
+                if match(lexer.TOKEN_TYPES.VARARG) then
+                    table.insert(parameters, ast_nodes.VarargExpression())
+                    consume(lexer.TOKEN_TYPES.VARARG)
+                    break
+                elseif match(lexer.TOKEN_TYPES.IDENTIFIER) then
+                    table.insert(parameters, parse_identifier())
+                else
+                    if not match(lexer.TOKEN_TYPES.RPAREN) then
+                        add_error("Expected parameter name or '...'", current_token)
+                    end
+                    break
+                end
+                
+                if match(lexer.TOKEN_TYPES.COMMA) then
+                    consume(lexer.TOKEN_TYPES.COMMA)
+                else
+                    break
+                end
+            end
+        end
+        
+        consume(lexer.TOKEN_TYPES.RPAREN, "Expected ')' after parameter list")
+        
+        local body = parse_block()
+        
+        if not match(lexer.TOKEN_TYPES.KEYWORD) or current_token.value ~= "end" then
+            add_error("Expected 'end' to close function body", current_token)
+        else
+            consume(lexer.TOKEN_TYPES.KEYWORD)
+        end
+        
+        return ast_nodes.FunctionExpression(parameters, body)
+    end
+    
+    return nil
+end
+
+parse_block = function()
+    local statements = {}
+    
+    while current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF do
+        if match(lexer.TOKEN_TYPES.KEYWORD) and 
+           (current_token.value == "end" or 
+            current_token.value == "else" or 
+            current_token.value == "elseif" or 
+            current_token.value == "until") then
+            break
+        end
+        
+        local statement = parse_statement()
+        if statement then
+            table.insert(statements, statement)
+        else
+            if match(lexer.TOKEN_TYPES.SEMI) then
+                consume(lexer.TOKEN_TYPES.SEMI)
+            else
+                if current_token and current_token.type ~= lexer.TOKEN_TYPES.EOF then
+                    add_error("Unexpected token in block", current_token)
+                    next_token()
+                else
+                    break
+                end
+            end
+        end
+        
+        if match(lexer.TOKEN_TYPES.SEMI) then
+            consume(lexer.TOKEN_TYPES.SEMI)
+        end
+    end
+    
+    return statements
+end
+
 function parser.parse(code)
     tokens, comments = lexer.tokenize(code)
     current_token_idx = 1
     current_token = tokens[1]
     errors = {}
     attached_comments = {}
+    
+    if current_token and current_token.type == lexer.TOKEN_TYPES.SHEBANG then
+        next_token()
+    end
     
     local body = parse_block()
     

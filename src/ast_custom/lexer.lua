@@ -52,6 +52,7 @@ lexer.TOKEN_TYPES = {
     LT_SYMBOL = "LT_SYMBOL",
     GT_SYMBOL = "GT_SYMBOL",
     COMMENT = "COMMENT",
+    SHEBANG = "SHEBANG",
     EOF = "EOF"
 }
 
@@ -748,6 +749,28 @@ function lexer.tokenize(code)
     local tokens = {}
     local comments = {}
     
+    if code:sub(1, 2) == "#!" then
+        local i = 1
+        local shebang_content = "#!"
+        while i <= #code and code:sub(i, i) ~= '\n' and code:sub(i, i) ~= '\r' do
+            shebang_content = shebang_content .. code:sub(i, i)
+            i = i + 1
+        end
+        
+        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), 1, 1, shebang_content))
+        
+        pos = i
+        if pos <= #code then
+            if code:sub(pos, pos) == '\r' and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == '\n' then
+                pos = pos + 2
+            else
+                pos = pos + 1
+            end
+        end
+        line = 2
+        col = 1
+    end
+    
     while pos <= #code do
         pos, line, col = skip_whitespace(code, pos, line, col)
         
@@ -1131,9 +1154,24 @@ function lexer.tokenize(code)
             pos = pos + 1
             col = col + 1
         elseif c == "#" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LEN, "#", line, col, "#"))
-            pos = pos + 1
-            col = col + 1
+            if pos == 1 and code:sub(pos + 1, pos + 1) == "!" then
+                local shebang_start = pos
+                local shebang_content = "#!"
+                pos = pos + 2
+                col = col + 2
+                
+                while pos <= #code and code:sub(pos, pos) ~= '\n' and code:sub(pos, pos) ~= '\r' do
+                    shebang_content = shebang_content .. code:sub(pos, pos)
+                    pos = pos + 1
+                    col = col + 1
+                end
+                
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), line, 1, shebang_content))
+            else
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LEN, "#", line, col, "#"))
+                pos = pos + 1
+                col = col + 1
+            end
         elseif c == "&" then
             table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BAND, "&", line, col, "&"))
             pos = pos + 1
