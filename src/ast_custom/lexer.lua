@@ -79,13 +79,15 @@ lexer.KEYWORDS = {
     ["while"] = true
 }
 
-function lexer.create_token(type, value, line, col, raw)
+function lexer.create_token(type, value, line, col, raw, offset, source)
     return {
         type = type,
         value = value,
         line = line or 0,
         col = col or 0,
-        raw = raw
+        raw = raw,
+        offset = offset or 0,
+        source = source or ""
     }
 end
 
@@ -114,7 +116,7 @@ local function skip_whitespace(code, pos, line, col)
     return pos, line, col
 end
 
-local function parse_comments(code, pos, line, col)
+local function parse_comments(code, pos, line, col, source_name)
     if pos + 1 <= #code and code:sub(pos, pos + 1) == "--" then
         local start_pos = pos
         local start_line = line
@@ -181,7 +183,9 @@ local function parse_comments(code, pos, line, col)
                                     string.sub(comment_text, 3),
                                     start_line,
                                     start_col,
-                                    comment_text
+                                    comment_text,
+                                    start_pos,
+                                    source_name
                                 ), is_multiline
                             end
                         end
@@ -200,7 +204,9 @@ local function parse_comments(code, pos, line, col)
                     string.sub(comment_text, 3),
                     start_line,
                     start_col,
-                    comment_text
+                    comment_text,
+                    start_pos,
+                    source_name
                 ), is_multiline
             end
         end
@@ -217,13 +223,15 @@ local function parse_comments(code, pos, line, col)
             string.sub(comment_text, 3),
             start_line,
             start_col,
-            comment_text
+            comment_text,
+            start_pos,
+            source_name
         ), false
     end
     return pos, line, col, nil, false
 end
 
-local function process_nested_comments(code, pos, line, col)
+local function process_nested_comments(code, pos, line, col, source_name)
     if pos + 1 <= #code and code:sub(pos, pos + 1) == "--" then
         local start_pos = pos
         local start_line = line
@@ -300,7 +308,9 @@ local function process_nested_comments(code, pos, line, col)
                                     string.sub(comment_text, 3),
                                     start_line,
                                     start_col,
-                                    comment_text
+                                    comment_text,
+                                    start_pos,
+                                    source_name
                                 ), is_multiline
                             else
                                 comment_text = comment_text .. "]"
@@ -365,7 +375,9 @@ local function process_nested_comments(code, pos, line, col)
                     string.sub(comment_text, 3),
                     start_line,
                     start_col,
-                    comment_text
+                    comment_text,
+                    start_pos,
+                    source_name
                 ), is_multiline
             end
         end
@@ -381,7 +393,9 @@ local function process_nested_comments(code, pos, line, col)
             string.sub(comment_text, 3),
             start_line,
             start_col,
-            comment_text
+            comment_text,
+            start_pos,
+            source_name
         ), false
     end
     
@@ -542,8 +556,8 @@ local function read_number(code, pos, line, col)
             col = col + 1
             
             if pos <= #code and (code:sub(pos, pos) == '+' or code:sub(pos, pos) == '-') then
-                pos = pos + 1
-                col = col + 1
+                pos = pos + 2
+                col = col + 2
             end
             
             local has_exponent_digits = false
@@ -740,12 +754,13 @@ local function add_error(message, line, col)
     print("LEXER ERROR: " .. message .. " at line " .. line .. ", col " .. col)
 end
 
-function lexer.tokenize(code)
+function lexer.tokenize(code, source_name)
     local pos = 1
     local line = 1
     local col = 1
     local tokens = {}
     local comments = {}
+    local offset = 0
     
     if code:sub(1, 2) == "#!" then
         local i = 1
@@ -755,50 +770,70 @@ function lexer.tokenize(code)
             i = i + 1
         end
         
-        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), 1, 1, shebang_content))
+        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), 1, 1, shebang_content, 0, source_name))
         
         pos = i
+        offset = i - 1
         if pos <= #code then
             if code:sub(pos, pos) == '\r' and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == '\n' then
                 pos = pos + 2
+                offset = offset + 2
             else
                 pos = pos + 1
+                offset = offset + 1
             end
         end
         line = 2
         col = 1
     end
     
+    local function update_whitespace_offsets(new_pos, new_line, new_col)
+        local diff_pos = new_pos - pos
+        offset = offset + diff_pos
+        pos = new_pos
+        line = new_line
+        col = new_col
+    end
+    
     while pos <= #code do
+        local old_pos = pos
+        local old_line = line
+        local old_col = col
         pos, line, col = skip_whitespace(code, pos, line, col)
+        update_whitespace_offsets(pos, line, col)
         
         if pos > #code then
             break
         end
         
-        local old_pos = pos
-        local old_line = line
-        local old_col = col
-        local pos_after_comment, line_after_comment, col_after_comment, comment_token, is_multiline = parse_comments(code, pos, line, col)
+        local token_start_pos = pos - 1
+        old_pos = pos
+        old_line = line
+        old_col = col
+        local pos_after_comment, line_after_comment, col_after_comment, comment_token, is_multiline = parse_comments(code, pos, line, col, source_name)
         
         if comment_token then
+            comment_token.offset = token_start_pos
+            comment_token.source = source_name
             table.insert(comments, comment_token)
-            pos, line, col = pos_after_comment, line_after_comment, col_after_comment
+            update_whitespace_offsets(pos_after_comment, line_after_comment, col_after_comment)
             goto continue
         end
         
-        local old_pos = pos
-        local old_line = line
-        local old_col = col
-        pos, line, col, comment_found = process_nested_comments(code, pos, line, col)
+        old_pos = pos
+        old_line = line
+        old_col = col
+        pos, line, col, comment_found = process_nested_comments(code, pos, line, col, source_name)
         
         if comment_found then
+            comment_found.offset = token_start_pos
+            comment_found.source = source_name
+            table.insert(comments, comment_found)
             goto continue
         end
         
         local c = code:sub(pos, pos)
         
-       
         if c:match("[%a_]") then
             local start = pos
             local col_start = col
@@ -806,27 +841,28 @@ function lexer.tokenize(code)
             while pos <= #code and code:sub(pos, pos):match("[%a%d_]") do
                 pos = pos + 1
                 col = col + 1
+                offset = offset + 1
             end
             
             local id = code:sub(start, pos - 1)
             
             if lexer.KEYWORDS[id] then
                 if id == "nil" then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NIL, nil, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NIL, nil, line, col_start, id, token_start_pos, source_name))
                 elseif id == "true" then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.TRUE, true, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.TRUE, true, line, col_start, id, token_start_pos, source_name))
                 elseif id == "false" then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.FALSE, false, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.FALSE, false, line, col_start, id, token_start_pos, source_name))
                 else
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.KEYWORD, id, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.KEYWORD, id, line, col_start, id, token_start_pos, source_name))
                 end
             else
                 if id == "const" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CONST, id, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CONST, id, line, col_start, id, token_start_pos, source_name))
                 elseif id == "close" and tokens[#tokens] and tokens[#tokens].type == lexer.TOKEN_TYPES.LT_SYMBOL then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CLOSE, id, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ATTR_CLOSE, id, line, col_start, id, token_start_pos, source_name))
                 else
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDENTIFIER, id, line, col_start, id))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDENTIFIER, id, line, col_start, id, token_start_pos, source_name))
                 end
             end
             
@@ -889,7 +925,7 @@ function lexer.tokenize(code)
                     
                     if not has_any_digit then
                         add_error("Malformed hexadecimal number", line, col)
-                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
+                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1), token_start_pos, source_name))
                         goto continue
                     end
                     
@@ -913,7 +949,7 @@ function lexer.tokenize(code)
                         end
                     end
                     
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str, token_start_pos, source_name))
                     goto continue
                 elseif next_char:lower() == "b" then
                     is_binary = true
@@ -922,7 +958,7 @@ function lexer.tokenize(code)
                     
                     if pos > #code or not code:sub(pos, pos):match("[01]") then
                         add_error("Malformed binary number", line, col)
-                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1)))
+                        table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, 0, line, col_start, code:sub(start, pos - 1), token_start_pos, source_name))
                         goto continue
                     end
                     
@@ -961,7 +997,7 @@ function lexer.tokenize(code)
                         
                         if pos > #code or not code:sub(pos, pos):match("[%d]") then
                             add_error("Malformed number exponent", line, col)
-                            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, tonumber(code:sub(start, pos - 1)) or 0, line, col_start, code:sub(start, pos - 1)))
+                            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, tonumber(code:sub(start, pos - 1)) or 0, line, col_start, code:sub(start, pos - 1), token_start_pos, source_name))
                             goto continue
                         end
                     else
@@ -978,7 +1014,7 @@ function lexer.tokenize(code)
                 num = 0
             end
             
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NUMBER, num, line, col_start, num_str, token_start_pos, source_name))
             
             goto continue
         end
@@ -1094,7 +1130,7 @@ function lexer.tokenize(code)
                 end
             end
             
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.STRING, str, line, col_start, raw))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.STRING, str, line, col_start, raw, token_start_pos, source_name))
             
             goto continue
         end
@@ -1122,35 +1158,41 @@ function lexer.tokenize(code)
         end
         
         if c == "+" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ADD, "+", line, col, "+"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ADD, "+", line, col, "+", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "-" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SUB, "-", line, col, "-"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SUB, "-", line, col, "-", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "*" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.MUL, "*", line, col, "*"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.MUL, "*", line, col, "*", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "/" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "/" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDIV, "//", line, col, "//"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.IDIV, "//", line, col, "//", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DIV, "/", line, col, "/"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DIV, "/", line, col, "/", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "%" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.MOD, "%", line, col, "%"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.MOD, "%", line, col, "%", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "^" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.POW, "^", line, col, "^"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.POW, "^", line, col, "^", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "#" then
             if pos == 1 and code:sub(pos + 1, pos + 1) == "!" then
                 local shebang_start = pos
@@ -1164,126 +1206,143 @@ function lexer.tokenize(code)
                     col = col + 1
                 end
                 
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), line, 1, shebang_content))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHEBANG, shebang_content:sub(3), line, 1, shebang_content, token_start_pos, source_name))
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LEN, "#", line, col, "#"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LEN, "#", line, col, "#", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "&" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BAND, "&", line, col, "&"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BAND, "&", line, col, "&", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "|" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BOR, "|", line, col, "|"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BOR, "|", line, col, "|", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "~" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "=" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NE, "~=", line, col, "~="))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.NE, "~=", line, col, "~=", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BXOR, "~", line, col, "~"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.BXOR, "~", line, col, "~", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "<" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "=" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LE, "<=", line, col, "<="))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LE, "<=", line, col, "<=", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             elseif pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "<" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHL, "<<", line, col, "<<"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHL, "<<", line, col, "<<", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT, "<", line, col, "<"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LT, "<", line, col, "<", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == ">" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "=" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GE, ">=", line, col, ">="))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GE, ">=", line, col, ">=", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             elseif pos + 1 <= #code and code:sub(pos + 1, pos + 1) == ">" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHR, ">>", line, col, ">>"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SHR, ">>", line, col, ">>", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT, ">", line, col, ">"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.GT, ">", line, col, ">", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "=" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "=" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.EQ, "==", line, col, "=="))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.EQ, "==", line, col, "==", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ASSIGN, "=", line, col, "="))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.ASSIGN, "=", line, col, "=", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "(" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LPAREN, "(", line, col, "("))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LPAREN, "(", line, col, "(", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == ")" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RPAREN, ")", line, col, ")"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RPAREN, ")", line, col, ")", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "[" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LBRACKET, "[", line, col, "["))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LBRACKET, "[", line, col, "[", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "]" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RBRACKET, "]", line, col, "]"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RBRACKET, "]", line, col, "]", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "{" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LBRACE, "{", line, col, "{"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.LBRACE, "{", line, col, "{", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "}" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RBRACE, "}", line, col, "}"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.RBRACE, "}", line, col, "}", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == "," then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.COMMA, ",", line, col, ","))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.COMMA, ",", line, col, ",", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == ";" then
-            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SEMI, ";", line, col, ";"))
+            table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.SEMI, ";", line, col, ";", token_start_pos, source_name))
             pos = pos + 1
             col = col + 1
+            offset = offset + 1
         elseif c == ":" then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == ":" then
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DOUBLE_COLON, "::", line, col, "::"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DOUBLE_COLON, "::", line, col, "::", token_start_pos, source_name))
                 pos = pos + 2
                 col = col + 2
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.COLON, ":", line, col, ":"))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.COLON, ":", line, col, ":", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         elseif c == "." then
             if pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "." then
                 if pos + 2 <= #code and code:sub(pos + 2, pos + 2) == "." then
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.VARARG, "...", line, col, "..."))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.VARARG, "...", line, col, "...", token_start_pos, source_name))
                     pos = pos + 3
                     col = col + 3
                 else
-                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.CONCAT, "..", line, col, ".."))
+                    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.CONCAT, "..", line, col, "..", token_start_pos, source_name))
                     pos = pos + 2
                     col = col + 2
                 end
             else
-                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DOT, ".", line, col, "."))
+                table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.DOT, ".", line, col, ".", token_start_pos, source_name))
                 pos = pos + 1
                 col = col + 1
             end
+            offset = offset + 1
         else
             
             add_error("Unrecognized character: " .. c, line, col)
@@ -1294,7 +1353,7 @@ function lexer.tokenize(code)
         ::continue::
     end
     
-    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.EOF, "", line, col, ""))
+    table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.EOF, "", line, col, "", token_start_pos, source_name))
     
     return tokens, comments
 end

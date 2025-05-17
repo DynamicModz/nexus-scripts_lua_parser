@@ -49,15 +49,51 @@ local function with_location(node, token_start, token_end)
         node.loc = {
             start = {
                 line = token_start.line,
-                col = token_start.col
+                col = token_start.col,
+                offset = token_start.offset or 0
             },
             ["end"] = {
                 line = (token_end and token_end.line) or token_start.line,
-                col = (token_end and token_end.col) or token_start.col
-            }
+                col = (token_end and token_end.col) or token_start.col,
+                offset = (token_end and token_end.offset) or token_start.offset or 0
+            },
+            source = token_start.source or ""
         }
     end
     return node
+end
+
+function ast_nodes.get_source_range(node)
+    if not node or not node.loc then
+        return "unknown location"
+    end
+    
+    local source = node.loc.source or "unknown"
+    local start_line = node.loc.start.line or 0
+    local start_col = node.loc.start.col or 0
+    local end_line = node.loc["end"].line or start_line
+    local end_col = node.loc["end"].col or start_col
+    
+    if start_line == end_line then
+        return string.format("%s:%d:%d-%d", source, start_line, start_col, end_col)
+    else
+        return string.format("%s:%d:%d-%d:%d", source, start_line, start_col, end_line, end_col)
+    end
+end
+
+function ast_nodes.get_source_text(node, source_code)
+    if not node or not node.loc or not source_code then
+        return nil
+    end
+    
+    local start_offset = node.loc.start.offset
+    local end_offset = node.loc["end"].offset
+    
+    if start_offset and end_offset and start_offset <= end_offset then
+        return string.sub(source_code, start_offset + 1, end_offset + 1)
+    end
+    
+    return nil
 end
 
 function ast_nodes.Chunk(body, comments, token_start, token_end)
@@ -429,8 +465,10 @@ function ast_nodes.createErrorNode(message, token, nodeType, token_start, token_
         message = message,
         line = token and token.line or 0,
         col = token and token.col or 0,
+        source = token and token.source or "",
+        offset = token and token.offset or 0,
         isError = true
-    }, token_start, token_end)
+    }, token_start or token, token_end or token)
 end
 
 function ast_nodes.GotoStatement(label, token_start, token_end)

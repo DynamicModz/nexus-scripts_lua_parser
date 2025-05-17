@@ -89,13 +89,11 @@ lua src/cli.lua parse input.lua --verbose
 ### Parser Improvements
 - More robust error recovery strategies
 - Add scope analysis for variables
-
 - ✅ Improved handling of complex expressions
   - Expression depth tracking to prevent stack overflow
   - Enhanced error reporting with contextual information
   - Support for deeply nested structures with mixed operator precedence
   - Graceful handling of pathologically complex inputs
-
 - ✅ Support for comments as part of the AST
   - Comments are preserved with source location information
   - Attached to relevant AST nodes based on position
@@ -106,7 +104,11 @@ lua src/cli.lua parse input.lua --verbose
   - Proper handling of comments after shebangs
 
 ### AST Nodes Improvements
-- Add source location information to all nodes
+- ✅ Add source location information to all nodes
+  - Comprehensive tracking of line, column, and character offset positions
+  - Source file attribution for precise error reporting
+  - Enhanced token location data throughout the parsing process
+  - Utility functions for source range formatting and extraction
 - Support for attaching metadata to nodes
 - Better serialization/deserialization of AST
 - Utility functions for common AST transformations

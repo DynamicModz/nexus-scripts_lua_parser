@@ -15,6 +15,7 @@ local current_token = nil
 local errors = {}
 local comments = {}
 local attached_comments = {}
+local source_name = ""
 
 local parse_identifier, parse_literal, parse_table_constructor
 local parse_member_expression, parse_function_call, parse_method_call
@@ -27,18 +28,28 @@ local parse_function_expression
 local function add_error(message, token, context)
     local line = token and token.line or 0
     local col = token and token.col or 0
+    local source = token and token.source or source_name or ""
+    local offset = token and token.offset or 0
     
     local error_message = message
     if context then
         error_message = message .. " (in " .. context .. ")"
     end
     
-    print("PARSER ERROR: " .. error_message .. " at line " .. line .. ", col " .. col)
+    local location_info = ""
+    if source ~= "" then
+        location_info = source .. ":"
+    end
+    location_info = location_info .. line .. ":" .. col
+    
+    print("PARSER ERROR: " .. error_message .. " at " .. location_info)
     
     table.insert(errors, {
         message = error_message,
         line = line,
         col = col,
+        source = source,
+        offset = offset,
         token = token,
         context = context
     })
@@ -411,23 +422,27 @@ parse_literal = function()
     if match(lexer.TOKEN_TYPES.NUMBER) then
         local token = current_token
         next_token()
-        return ast_nodes.NumericLiteral(token.value, token.raw)
+        return ast_nodes.NumericLiteral(token.value, token.raw, token, token)
     elseif match(lexer.TOKEN_TYPES.STRING) then
         local token = current_token
         next_token()
-        return ast_nodes.StringLiteral(token.value, token.raw)
+        return ast_nodes.StringLiteral(token.value, token.raw, token, token)
     elseif match(lexer.TOKEN_TYPES.NIL) or (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "nil") then
+        local token = current_token
         next_token()
-        return ast_nodes.NilLiteral()
+        return ast_nodes.NilLiteral(token, token)
     elseif match(lexer.TOKEN_TYPES.TRUE) or (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "true") then
+        local token = current_token
         next_token()
-        return ast_nodes.BooleanLiteral(true)
+        return ast_nodes.BooleanLiteral(true, token, token)
     elseif match(lexer.TOKEN_TYPES.FALSE) or (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "false") then
+        local token = current_token
         next_token()
-        return ast_nodes.BooleanLiteral(false)
+        return ast_nodes.BooleanLiteral(false, token, token)
     elseif match(lexer.TOKEN_TYPES.VARARG) then
+        local token = current_token
         next_token()
-        return ast_nodes.VarargExpression()
+        return ast_nodes.VarargExpression(token, token)
     end
     return nil
 end
@@ -655,6 +670,7 @@ parse_unary_expression = function(depth, context)
         
         local operator
         local token = current_token
+        local token_start = token
         
         if match(lexer.TOKEN_TYPES.SUB) then
             operator = "-"
@@ -692,7 +708,8 @@ parse_unary_expression = function(depth, context)
             end
         end
         
-        local expr = ast_nodes.UnaryExpression(operator, argument, token)
+        local token_end = argument.loc and argument.loc["end"] and tokens[current_token_idx - 1] or token_start
+        local expr = ast_nodes.UnaryExpression(operator, argument, token_start, token_end)
         expr.expression_depth = depth
         return expr
     end
@@ -742,6 +759,7 @@ parse_binary_expression = function(min_precedence, depth, context)
     while true do
         local op = nil
         local current_token_type = current_token and current_token.type or ""
+        local op_token = current_token
         
         if match(lexer.TOKEN_TYPES.ADD) then
             op = '+'
@@ -792,6 +810,14 @@ parse_binary_expression = function(min_precedence, depth, context)
         end
         
         local op_token = current_token
+        local token_start = op_token
+        if left.loc and left.loc.start then
+            local offset = left.loc.start.offset
+            if offset and tokens[offset] then
+                token_start = tokens[offset]
+            end
+        end
+        
         next_token()
         
         local next_min_precedence = BINARY_OPS[op].precedence
@@ -806,7 +832,15 @@ parse_binary_expression = function(min_precedence, depth, context)
             right = ast_nodes.createErrorNode("Missing right operand", op_token)
         end
         
-        local binary_expr = ast_nodes.BinaryExpression(op, left, right)
+        local token_end = op_token
+        if right.loc and right.loc["end"] then
+            local offset = right.loc["end"].offset
+            if offset and tokens[offset] then
+                token_end = tokens[offset]
+            end
+        end
+        
+        local binary_expr = ast_nodes.BinaryExpression(op, left, right, token_start, token_end)
         binary_expr.expression_depth = depth
         
         if op == '&' or op == '|' or op == '~' or op == '<<' or op == '>>' or op == '//' then
@@ -883,6 +917,7 @@ parse_if_statement = function()
         return nil
     end
     
+    local token_start = current_token
     local start_token_idx = current_token_idx
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
@@ -901,9 +936,11 @@ parse_if_statement = function()
     end
     
     local body = parse_block()
-    table.insert(clauses, ast_nodes.IfClause(condition, body))
+    local if_clause_token_end = current_token
+    table.insert(clauses, ast_nodes.IfClause(condition, body, token_start, if_clause_token_end))
     
     while match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "elseif" do
+        local elseif_token_start = current_token
         consume(lexer.TOKEN_TYPES.KEYWORD)
         
         local elseif_condition = parse_expression()
@@ -919,14 +956,17 @@ parse_if_statement = function()
         end
         
         local elseif_body = parse_block()
-        table.insert(clauses, ast_nodes.IfClause(elseif_condition, elseif_body))
+        local elseif_token_end = current_token
+        table.insert(clauses, ast_nodes.IfClause(elseif_condition, elseif_body, elseif_token_start, elseif_token_end))
     end
     
     if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "else" then
+        local else_token_start = current_token
         consume(lexer.TOKEN_TYPES.KEYWORD)
         
         local else_body = parse_block()
-        table.insert(clauses, ast_nodes.ElseClause(else_body))
+        local else_token_end = current_token
+        table.insert(clauses, ast_nodes.ElseClause(else_body, else_token_start, else_token_end))
     end
     
     if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "end") then
@@ -935,8 +975,9 @@ parse_if_statement = function()
         consume(lexer.TOKEN_TYPES.KEYWORD)
     end
     
+    local token_end = tokens[current_token_idx - 1]
     local end_token_idx = current_token_idx - 1
-    local node = ast_nodes.IfStatement(clauses)
+    local node = ast_nodes.IfStatement(clauses, token_start, token_end)
     return attach_comments(node, start_token_idx, end_token_idx)
 end
 
@@ -945,6 +986,7 @@ parse_while_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
     local condition = parse_expression()
@@ -967,7 +1009,8 @@ parse_while_statement = function()
         consume(lexer.TOKEN_TYPES.KEYWORD) 
     end
     
-    return ast_nodes.WhileStatement(condition, body)
+    local token_end = tokens[current_token_idx - 1]
+    return ast_nodes.WhileStatement(condition, body, token_start, token_end)
 end
 
 parse_repeat_statement = function()
@@ -975,6 +1018,7 @@ parse_repeat_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
     local body = parse_block()
@@ -991,7 +1035,8 @@ parse_repeat_statement = function()
         return nil
     end
     
-    return ast_nodes.RepeatStatement(condition, body)
+    local token_end = current_token
+    return ast_nodes.RepeatStatement(condition, body, token_start, token_end)
 end
 
 parse_for_statement = function()
@@ -999,6 +1044,7 @@ parse_for_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     if match(lexer.TOKEN_TYPES.IDENTIFIER) then
@@ -1050,7 +1096,8 @@ parse_for_statement = function()
                 consume(lexer.TOKEN_TYPES.KEYWORD)
             end
             
-            return ast_nodes.ForNumericStatement(variable, start, stop, step, body)
+            local token_end = tokens[current_token_idx - 1]
+            return ast_nodes.ForNumericStatement(variable, start, stop, step, body, token_start, token_end)
         else
             local variables = { variable }
             
@@ -1088,7 +1135,8 @@ parse_for_statement = function()
                 consume(lexer.TOKEN_TYPES.KEYWORD)
             end
             
-            return ast_nodes.ForGenericStatement(variables, iterators, body)
+            local token_end = tokens[current_token_idx - 1]
+            return ast_nodes.ForGenericStatement(variables, iterators, body, token_start, token_end)
         end
     else
         add_error("Expected variable name after 'for'", current_token)
@@ -1101,6 +1149,7 @@ parse_do_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     local body = parse_block()
@@ -1111,7 +1160,8 @@ parse_do_statement = function()
         consume(lexer.TOKEN_TYPES.KEYWORD) 
     end
     
-    return ast_nodes.DoStatement(body)
+    local token_end = tokens[current_token_idx - 1]
+    return ast_nodes.DoStatement(body, token_start, token_end)
 end
 
 parse_function_declaration = function()
@@ -1204,8 +1254,9 @@ parse_function_declaration = function()
         consume(lexer.TOKEN_TYPES.KEYWORD)
     end
     
+    local token_end = tokens[current_token_idx - 1]
     local end_token_idx = current_token_idx - 1
-    local node = ast_nodes.FunctionDeclaration(base, parameters, body, isLocal, token_start, current_token)
+    local node = ast_nodes.FunctionDeclaration(base, parameters, body, isLocal, token_start, token_end)
     return attach_comments(node, start_token_idx, end_token_idx)
 end
 
@@ -1214,6 +1265,7 @@ parse_local_function_declaration = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
     if not (match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function") then
@@ -1270,7 +1322,8 @@ parse_local_function_declaration = function()
         consume(lexer.TOKEN_TYPES.KEYWORD)
     end
     
-    return ast_nodes.FunctionDeclaration(identifier, parameters, body, true)
+    local token_end = tokens[current_token_idx - 1]
+    return ast_nodes.FunctionDeclaration(identifier, parameters, body, true, token_start, token_end)
 end
 
 parse_local_statement = function()
@@ -1311,8 +1364,9 @@ parse_local_statement = function()
         end
     end
     
+    local token_end = current_token
     local end_token_idx = current_token_idx
-    local node = ast_nodes.LocalStatement(variables, init, token_start, current_token)
+    local node = ast_nodes.LocalStatement(variables, init, token_start, token_end)
     return attach_comments(node, start_token_idx, end_token_idx)
 end
 
@@ -1321,6 +1375,7 @@ parse_return_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     local arguments = {}
@@ -1335,11 +1390,13 @@ parse_return_statement = function()
         arguments = parse_expression_list(0)
     end
     
+    local token_end = current_token
     if match(lexer.TOKEN_TYPES.SEMI) then
+        token_end = current_token
         consume(lexer.TOKEN_TYPES.SEMI)
     end
     
-    return ast_nodes.ReturnStatement(arguments)
+    return ast_nodes.ReturnStatement(arguments, token_start, token_end)
 end
 
 parse_break_statement = function()
@@ -1347,13 +1404,16 @@ parse_break_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
+    local token_end = current_token
     if match(lexer.TOKEN_TYPES.SEMI) then
+        token_end = current_token
         consume(lexer.TOKEN_TYPES.SEMI)
     end
     
-    return ast_nodes.BreakStatement()
+    return ast_nodes.BreakStatement(token_start, token_end)
 end
 
 parse_goto_statement = function()
@@ -1361,6 +1421,7 @@ parse_goto_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     local label = parse_identifier()
@@ -1369,7 +1430,8 @@ parse_goto_statement = function()
         return nil
     end
     
-    return ast_nodes.GotoStatement(label)
+    local token_end = current_token
+    return ast_nodes.GotoStatement(label, token_start, token_end)
 end
 
 parse_label_statement = function()
@@ -1377,6 +1439,7 @@ parse_label_statement = function()
         return nil
     end
     
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.DOUBLE_COLON)
     
     local label = parse_identifier()
@@ -1385,17 +1448,20 @@ parse_label_statement = function()
         return nil
     end
     
+    local token_end = current_token
     if not match(lexer.TOKEN_TYPES.DOUBLE_COLON) then
         add_error("Expected '::' after label name", current_token)
     else
+        token_end = current_token
         consume(lexer.TOKEN_TYPES.DOUBLE_COLON)
     end
     
-    return ast_nodes.LabelStatement(label)
+    return ast_nodes.LabelStatement(label, token_start, token_end)
 end
 
 parse_assignment_or_call = function()
     local start_idx = current_token_idx
+    local token_start = current_token
     local expr = parse_expression()
     
     if not expr then
@@ -1420,12 +1486,13 @@ parse_assignment_or_call = function()
         consume(lexer.TOKEN_TYPES.ASSIGN, "Expected '=' after variable list")
         
         local init = parse_expression_list()
+        local token_end = current_token
         
-        return ast_nodes.AssignmentStatement(variables, init)
+        return ast_nodes.AssignmentStatement(variables, init, token_start, token_end)
     end
     
     if expr.type == "CallExpression" or expr.type == "MethodCallExpression" then
-        return ast_nodes.CallStatement(expr)
+        return ast_nodes.CallStatement(expr, token_start, expr.loc and expr.loc["end"] and tokens[expr.loc["end"].offset] or token_start)
     end
     
     add_error("Expected assignment or function call", tokens[start_idx])
@@ -1533,8 +1600,9 @@ parse_block = function()
     return statements
 end
 
-function parser.parse(code)
-    tokens, comments = lexer.tokenize(code)
+function parser.parse(code, file_source_name)
+    source_name = file_source_name or ""
+    tokens, comments = lexer.tokenize(code, source_name)
     current_token_idx = 1
     current_token = tokens[1]
     errors = {}
@@ -1567,7 +1635,7 @@ function parser.parse(code)
         end
     end
     
-    local ast = ast_nodes.Chunk(body, {})
+    local ast = ast_nodes.Chunk(body, {}, tokens[1], tokens[#tokens])
     
     if #file_level_comments > 0 then
         ast.comments = file_level_comments
