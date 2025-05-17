@@ -106,6 +106,13 @@ function pipeline.run(code, source_name, options)
         return nil, errors
     end
     
+    if options.config.comments and 
+       options.config.comments.preserve_license == false and
+       options.config.comments.preserve_special == false and
+       options.config.comments.preserve_doc == false then
+        options.remove_comments = true
+    end
+    
     state, errors = format_step(state, options)
     if errors and #errors > 0 then
         return nil, errors
@@ -144,6 +151,15 @@ function pipeline.format(code, source_name, config_or_preset_name)
     local options = {
         config = config,
         minify = (config_or_preset_name == "minify")
+    }
+    
+    return pipeline.run(code, source_name, options)
+end
+
+function pipeline.remove_comments(code, source_name, config)
+    local options = {
+        config = config or formatter_config.get_preset("rmcomments"),
+        minify = false
     }
     
     return pipeline.run(code, source_name, options)

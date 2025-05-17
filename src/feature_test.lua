@@ -1,4 +1,4 @@
-local binary_val = 0b101010
+local binary_val = 0b101010 
 local hex_float = 0x1.8p3
 local utf8_str = "Unicode: \u{1F680}"
 

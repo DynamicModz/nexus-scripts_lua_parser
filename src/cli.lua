@@ -30,8 +30,8 @@ local COMMANDS = {
         usage = "cli.lua parse <input_file> [output_file] [--format=json|lua] [--output=ast|tokens|both]"
     },
     format = {
-        desc = "Format a Lua file with beautification or minification",
-        usage = "cli.lua format <input_file> [output_file] [--style=default|compact|expanded|minify] [--config=<config_file>] [--debug-ast]"
+        desc = "Format a Lua file with beautification, minification, or comment removal",
+        usage = "cli.lua format <input_file> [output_file] [--style=default|compact|expanded|minify|rmcomments] [--config=<config_file>] [--debug-ast]"
     },
     help = {
         desc = "Show help information",
@@ -43,7 +43,7 @@ local COMMANDS = {
     },
     config = {
         desc = "Create a formatter configuration file",
-        usage = "cli.lua config <output_file> [--preset=default|compact|expanded|minify]"
+        usage = "cli.lua config <output_file> [--preset=default|compact|expanded|minify|rmcomments]"
     }
 }
 
@@ -431,7 +431,12 @@ local function handle_format(args, verbose)
     }
     
     local formatter_pipeline = require("ast_custom.formatter_pipeline")
-    formatted, err = formatter_pipeline.run(content, input_file, pipeline_options)
+    
+    if style == "rmcomments" then
+        formatted, err = formatter_pipeline.remove_comments(content, input_file, config)
+    else
+        formatted, err = formatter_pipeline.run(content, input_file, pipeline_options)
+    end
     
     if not formatted then
         print_error("Formatting failed: " .. tostring(err))
@@ -477,7 +482,7 @@ local function handle_config(args, verbose)
 
     if not config then
         print_error("Invalid preset: " .. preset)
-        print_info("Available presets: default, compact, expanded, minify")
+        print_info("Available presets: default, compact, expanded, minify, rmcomments")
         return false
     end
     
@@ -520,6 +525,7 @@ local function handle_help(args)
         print_info("  lua cli.lua format input.lua                        # Format with default style")
         print_info("  lua cli.lua format input.lua --style=compact         # Format with compact style")
         print_info("  lua cli.lua format input.lua --style=minify          # Minify the code")
+        print_info("  lua cli.lua format input.lua --style=rmcomments      # Remove all comments from the code")
         print_info("  lua cli.lua config formatter.conf --preset=expanded   # Create config file with expanded preset")
         print_info("  lua cli.lua format input.lua --config=formatter.conf   # Format using custom config")
     else
@@ -531,10 +537,11 @@ local function handle_help(args)
             
             if cmd_name == "format" then
                 print_info("\nFormat Options:")
-                print_info("  --style=<style>       Set formatting style (default, compact, expanded, minify)")
+                print_info("  --style=<style>       Set formatting style (default, compact, expanded, minify, rmcomments)")
                 print_info("  --config=<file>       Use custom configuration file")
                 print_info("  --debug-ast           Print AST structure to console for debugging")
                 print_info("  --verbose             Show detailed information during formatting")
+                print_info("\nThe 'rmcomments' style intelligently removes all comments while preserving code structure.")
             elseif cmd_name == "parse" then
                 print_info("\nParse Options:")
                 print_info("  --format=<format>     Output format (json, lua)")
@@ -542,7 +549,7 @@ local function handle_help(args)
                 print_info("  --verbose             Show detailed information during parsing")
             elseif cmd_name == "config" then
                 print_info("\nConfig Options:")
-                print_info("  --preset=<preset>     Which preset to use (default, compact, expanded, minify)")
+                print_info("  --preset=<preset>     Which preset to use (default, compact, expanded, minify, rmcomments)")
             end
         else
             print_error("Unknown command: " .. cmd_name)

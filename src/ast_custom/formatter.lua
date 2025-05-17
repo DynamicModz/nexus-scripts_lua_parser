@@ -132,13 +132,39 @@ local function format_beautified(ast, fmt, source_code)
     
     local function process_comments_at_location(node, location)
         if node.comments and node.comments[location] then
+            if fmt.config.comments.preserve_license == false and 
+               fmt.config.comments.preserve_special == false and 
+               fmt.config.comments.preserve_doc == false then
+                return
+            end
+            
             for _, comment in ipairs(node.comments[location]) do
-                if comment.isMultiline then
-                    add_to_output("--[[" .. comment.value .. "]]", false)
+                local should_preserve = true
+                
+                if fmt.config.comments.remove_single_only and comment.isMultiline then
+                    should_preserve = true
+                elseif fmt.config.comments.remove_multi_only and not comment.isMultiline then
+                    should_preserve = true
                 else
-                    add_to_output("--" .. comment.value, false)
+                    should_preserve = (fmt.config.comments.preserve_license and 
+                                     (comment.value:lower():find("license") or 
+                                      comment.value:lower():find("copyright"))) or
+                                    (fmt.config.comments.preserve_special and 
+                                     (comment.value:sub(1, 1) == "!" or 
+                                      (comment.isMultiline and comment.value:sub(1, 1) == "!"))) or
+                                    (fmt.config.comments.preserve_doc and 
+                                     (comment.value:sub(1, 1) == "-" or 
+                                      (comment.isMultiline and comment.value:sub(1, 3) == "DOC")))
                 end
-                add_newline_with_indent()
+                
+                if should_preserve then
+                    if comment.isMultiline then
+                        add_to_output("--[[" .. comment.value .. "]]", false)
+                    else
+                        add_to_output("--" .. comment.value, false)
+                    end
+                    add_newline_with_indent()
+                end
             end
         end
     end
@@ -766,6 +792,12 @@ local function format_minified(ast, fmt, source_code)
     local function should_preserve_comment(comment)
         if not fmt.config.minify.remove_whitespace then
             return true
+        end
+        
+        if fmt.config.comments.preserve_license == false and 
+           fmt.config.comments.preserve_special == false and 
+           fmt.config.comments.preserve_doc == false then
+            return false
         end
         
         if fmt.config.comments.preserve_license and 
@@ -1476,6 +1508,16 @@ formatter.PRESETS = {
         comments = {
             preserve_license = true,
             preserve_special = true,
+            preserve_doc = false,
+            remove_single_only = false,
+            remove_multi_only = false,
+        },
+    },
+    
+    rmcomments = {
+        comments = {
+            preserve_license = false,
+            preserve_special = false,
             preserve_doc = false,
             remove_single_only = false,
             remove_multi_only = false,

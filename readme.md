@@ -66,6 +66,7 @@ The formatter module handles code beautification and minification based on the A
 - Customizable spacing, indentation, and line break rules
 - Consistent handling of operators, including bitwise operators
 - Comment preservation options
+- Intelligent comment removal while preserving code structure
 
 ### 5. Formatter Configuration (`formatter_config.lua`)
 
@@ -73,7 +74,7 @@ The formatter configuration module manages formatting preferences and presets.
 
 **Current Features:**
 - Default configuration with reasonable defaults
-- Multiple built-in presets (default, compact, expanded, minify)
+- Multiple built-in presets (default, compact, expanded, minify, rmcomments)
 - Configuration merging capabilities
 - Save/load configuration to/from files
 - Comprehensive options for:
@@ -100,8 +101,8 @@ The formatter pipeline orchestrates the entire formatting process from code to A
 The NexusScripts Parser Module includes a command-line interface (CLI) tool with the following features:
 
 - Parse Lua files and output AST representation
-- Format Lua files with beautification or minification
-- Multiple formatting style presets (default, compact, expanded, minify)
+- Format Lua files with beautification, minification, or comment removal
+- Multiple formatting style presets (default, compact, expanded, minify, rmcomments)
 - Custom formatter configuration support
 - Generate output in either Lua table or JSON format
 - Output AST only, tokens only, or both in a single command
@@ -130,6 +131,9 @@ lua src/cli.lua format input.lua --style=compact
 
 # Minify a Lua file
 lua src/cli.lua format input.lua --style=minify
+
+# Remove all comments from a Lua file
+lua src/cli.lua format input.lua --style=rmcomments
 
 # Format using a custom configuration
 lua src/cli.lua format input.lua --config=my_config.lua

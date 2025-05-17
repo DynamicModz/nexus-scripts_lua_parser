@@ -130,6 +130,42 @@ formatter_config.PRESETS = {
             shorten_identifiers = false,
         },
     },
+    
+    rmcomments = {
+        indent = {
+            use_tabs = false,
+            size = 4,
+        },
+        line_breaks = {
+            before_blocks = true,
+            after_statements = true,
+            max_line_length = 100,
+        },
+        spaces = {
+            around_operators = true,
+            after_commas = true,
+            inside_parentheses = false,
+            inside_braces = true,
+            inside_brackets = false,
+        },
+        alignment = {
+            function_parameters = false,
+            table_fields = false,
+        },
+        comments = {
+            preserve_license = false,
+            preserve_special = false,
+            preserve_doc = false,
+            remove_single_only = false,
+            remove_multi_only = false,
+        },
+        minify = {
+            remove_whitespace = false,
+            join_consecutive_statements = false,
+            compress_tokens = false,
+            shorten_identifiers = false,
+        },
+    },
 }
 
 function formatter_config.merge(base_config, user_config)
