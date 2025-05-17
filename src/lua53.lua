@@ -1,3 +1,6 @@
+--[[
+    Dev : NexusScripts
+]]
 local num = 42                  -- Integer
 local float = 3.14159           -- Decimal float
 local hex = 0xFF                -- Hexadecimal integer (255)

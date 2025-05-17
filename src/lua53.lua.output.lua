@@ -1,633 +1,784 @@
 return {
   ast = {
-  ["comments"] = {
-  },
-  ["type"] = "Chunk",
   ["body"] = {
     [1] = {
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 4,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 4,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "num",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 1,
+            ["raw"] = "--[[[\
+    Dev : NexusScripts\
+]]",
+            ["value"] = "[[[\
+    Dev : NexusScripts\
+]]",
+            ["type"] = "COMMENT",
+            ["col"] = 1,
+          },
+        },
+      },
       ["loc"] = {
-        ["end"] = {
-          ["line"] = 6,
+        ["start"] = {
+          ["line"] = 4,
           ["col"] = 1,
         },
-        ["start"] = {
+        ["end"] = {
           ["line"] = 5,
           ["col"] = 1,
         },
       },
+      ["type"] = "LocalStatement",
       ["init"] = {
         [1] = {
           ["is_lua53_feature"] = false,
-          ["value"] = 42,
-          ["type"] = "NumericLiteral",
           ["raw"] = "42",
-        },
-      },
-      ["type"] = "LocalStatement",
-      ["variables"] = {
-        [1] = {
-          ["name"] = "num",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 5,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 5,
-              ["col"] = 7,
-            },
-          },
-          ["type"] = "Identifier",
-          ["attributes"] = {
-          },
+          ["type"] = "NumericLiteral",
+          ["value"] = 42,
         },
       },
     },
     [2] = {
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 5,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 5,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "float",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 4,
+            ["raw"] = "-- Integer",
+            ["value"] = " Integer",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
       ["loc"] = {
-        ["end"] = {
-          ["line"] = 7,
+        ["start"] = {
+          ["line"] = 5,
           ["col"] = 1,
         },
-        ["start"] = {
+        ["end"] = {
           ["line"] = 6,
           ["col"] = 1,
         },
       },
+      ["type"] = "LocalStatement",
       ["init"] = {
         [1] = {
           ["is_lua53_feature"] = false,
-          ["value"] = 3.14159,
-          ["type"] = "NumericLiteral",
           ["raw"] = "3.14159",
-        },
-      },
-      ["type"] = "LocalStatement",
-      ["variables"] = {
-        [1] = {
-          ["name"] = "float",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 6,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 6,
-              ["col"] = 7,
-            },
-          },
-          ["type"] = "Identifier",
-          ["attributes"] = {
-          },
+          ["type"] = "NumericLiteral",
+          ["value"] = 3.14159,
         },
       },
     },
     [3] = {
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 6,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 6,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "hex",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 5,
+            ["raw"] = "-- Decimal float",
+            ["value"] = " Decimal float",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
       ["loc"] = {
-        ["end"] = {
-          ["line"] = 8,
+        ["start"] = {
+          ["line"] = 6,
           ["col"] = 1,
         },
-        ["start"] = {
+        ["end"] = {
           ["line"] = 7,
           ["col"] = 1,
         },
       },
+      ["type"] = "LocalStatement",
       ["init"] = {
         [1] = {
           ["is_lua53_feature"] = false,
-          ["value"] = 255,
-          ["type"] = "NumericLiteral",
           ["raw"] = "0xFF",
-        },
-      },
-      ["type"] = "LocalStatement",
-      ["variables"] = {
-        [1] = {
-          ["name"] = "hex",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 7,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 7,
-              ["col"] = 7,
-            },
-          },
-          ["type"] = "Identifier",
-          ["attributes"] = {
-          },
+          ["type"] = "NumericLiteral",
+          ["value"] = 255,
         },
       },
     },
     [4] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 11,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 8,
-          ["col"] = 1,
-        },
-      },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["value"] = 256.0,
-          ["type"] = "NumericLiteral",
-          ["raw"] = "0x1p8",
-        },
-      },
-      ["type"] = "LocalStatement",
       ["variables"] = {
         [1] = {
-          ["name"] = "hex_float",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 8,
+            ["start"] = {
+              ["line"] = 7,
               ["col"] = 7,
             },
-            ["start"] = {
-              ["line"] = 8,
+            ["end"] = {
+              ["line"] = 7,
               ["col"] = 7,
             },
           },
+          ["name"] = "hex_float",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 6,
+            ["raw"] = "-- Hexadecimal integer (255)",
+            ["value"] = " Hexadecimal integer (255)",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 7,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 9,
+          ["col"] = 1,
+        },
+      },
+      ["type"] = "LocalStatement",
+      ["init"] = {
+        [1] = {
+          ["is_lua53_feature"] = true,
+          ["raw"] = "0x1p8",
+          ["type"] = "NumericLiteral",
+          ["value"] = 256.0,
         },
       },
     },
     [5] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 12,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 11,
-          ["col"] = 1,
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 9,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 9,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "band",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
         },
       },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "&",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 7,
+            ["raw"] = "-- Hex float (256.0) - Lua 5.3 feature",
+            ["value"] = " Hex float (256.0) - Lua 5.3 feature",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
           },
-          ["original_left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 255,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xFF",
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 255,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xFF",
-          },
-          ["substituted_operator"] = "&",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__band",
-          ["original_right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
-          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 9,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 10,
+          ["col"] = 1,
         },
       },
       ["type"] = "LocalStatement",
-      ["variables"] = {
+      ["init"] = {
         [1] = {
-          ["name"] = "band",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 11,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 11,
-              ["col"] = 7,
-            },
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__band",
+          ["original_left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xFF",
+            ["type"] = "NumericLiteral",
+            ["value"] = 255,
           },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xFF",
+            ["type"] = "NumericLiteral",
+            ["value"] = 255,
+          },
+          ["original_right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "&",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "&",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
           },
         },
       },
     },
     [6] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 13,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 12,
-          ["col"] = 1,
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 10,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 10,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "bor",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
         },
       },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "|",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 9,
+            ["raw"] = "-- Bitwise AND: 15",
+            ["value"] = " Bitwise AND: 15",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
           },
-          ["original_left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 240,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xF0",
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 240,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xF0",
-          },
-          ["substituted_operator"] = "|",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__bor",
-          ["original_right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
-          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 10,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 11,
+          ["col"] = 1,
         },
       },
       ["type"] = "LocalStatement",
-      ["variables"] = {
+      ["init"] = {
         [1] = {
-          ["name"] = "bor",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 12,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 12,
-              ["col"] = 7,
-            },
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__bor",
+          ["original_left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xF0",
+            ["type"] = "NumericLiteral",
+            ["value"] = 240,
           },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xF0",
+            ["type"] = "NumericLiteral",
+            ["value"] = 240,
+          },
+          ["original_right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "|",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "|",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
           },
         },
       },
     },
     [7] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 14,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 13,
-          ["col"] = 1,
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 11,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 11,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "bxor",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
         },
       },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "~",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 10,
+            ["raw"] = "-- Bitwise OR: 255 ",
+            ["value"] = " Bitwise OR: 255 ",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
           },
-          ["original_left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 255,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xFF",
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 255,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0xFF",
-          },
-          ["substituted_operator"] = "~",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__bxor",
-          ["original_right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
-          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 11,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 12,
+          ["col"] = 1,
         },
       },
       ["type"] = "LocalStatement",
-      ["variables"] = {
+      ["init"] = {
         [1] = {
-          ["name"] = "bxor",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 13,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 13,
-              ["col"] = 7,
-            },
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__bxor",
+          ["original_left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xFF",
+            ["type"] = "NumericLiteral",
+            ["value"] = 255,
           },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0xFF",
+            ["type"] = "NumericLiteral",
+            ["value"] = 255,
+          },
+          ["original_right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "~",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "~",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
           },
         },
       },
     },
     [8] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 15,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 14,
-          ["col"] = 1,
-        },
-      },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "~",
-          ["type"] = "UnaryExpression",
-          ["has_metamethod"] = true,
-          ["argument"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 15,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "0x0F",
-          },
-          ["potential_metamethod"] = "__bnot",
-        },
-      },
-      ["type"] = "LocalStatement",
       ["variables"] = {
         [1] = {
-          ["name"] = "bnot",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 14,
+            ["start"] = {
+              ["line"] = 12,
               ["col"] = 7,
             },
-            ["start"] = {
-              ["line"] = 14,
+            ["end"] = {
+              ["line"] = 12,
               ["col"] = 7,
             },
           },
+          ["name"] = "bnot",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 11,
+            ["raw"] = "-- Bitwise XOR: 240",
+            ["value"] = " Bitwise XOR: 240",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 12,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 13,
+          ["col"] = 1,
+        },
+      },
+      ["type"] = "LocalStatement",
+      ["init"] = {
+        [1] = {
+          ["potential_metamethod"] = "__bnot",
+          ["argument"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "0x0F",
+            ["type"] = "NumericLiteral",
+            ["value"] = 15,
+          },
+          ["operator"] = "~",
+          ["is_lua53_feature"] = true,
+          ["type"] = "UnaryExpression",
+          ["has_metamethod"] = true,
         },
       },
     },
     [9] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 16,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 15,
-          ["col"] = 1,
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 13,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 13,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "shl",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
         },
       },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "<<",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "3",
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 12,
+            ["raw"] = "-- Bitwise NOT: -16",
+            ["value"] = " Bitwise NOT: -16",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
           },
-          ["original_left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 1,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "1",
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 1,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "1",
-          },
-          ["substituted_operator"] = "<<",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__shl",
-          ["original_right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "3",
-          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 13,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 14,
+          ["col"] = 1,
         },
       },
       ["type"] = "LocalStatement",
-      ["variables"] = {
+      ["init"] = {
         [1] = {
-          ["name"] = "shl",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 15,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 15,
-              ["col"] = 7,
-            },
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__shl",
+          ["original_left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "1",
+            ["type"] = "NumericLiteral",
+            ["value"] = 1,
           },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "1",
+            ["type"] = "NumericLiteral",
+            ["value"] = 1,
+          },
+          ["original_right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "<<",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "<<",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
           },
         },
       },
     },
     [10] = {
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 14,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 14,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "shr",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
+        },
+      },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 13,
+            ["raw"] = "-- Shift left: 8",
+            ["value"] = " Shift left: 8",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
       ["loc"] = {
-        ["end"] = {
-          ["line"] = 19,
+        ["start"] = {
+          ["line"] = 14,
           ["col"] = 1,
         },
-        ["start"] = {
+        ["end"] = {
           ["line"] = 16,
           ["col"] = 1,
         },
       },
+      ["type"] = "LocalStatement",
       ["init"] = {
         [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = ">>",
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
           ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "3",
-          },
+          ["potential_metamethod"] = "__shr",
           ["original_left"] = {
             ["is_lua53_feature"] = false,
-            ["value"] = 128,
-            ["type"] = "NumericLiteral",
             ["raw"] = "0x80",
+            ["type"] = "NumericLiteral",
+            ["value"] = 128,
           },
-          ["lua53_feature"] = true,
           ["left"] = {
             ["is_lua53_feature"] = false,
-            ["value"] = 128,
-            ["type"] = "NumericLiteral",
             ["raw"] = "0x80",
+            ["type"] = "NumericLiteral",
+            ["value"] = 128,
           },
-          ["substituted_operator"] = ">>",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__shr",
           ["original_right"] = {
             ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
             ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
           },
-        },
-      },
-      ["type"] = "LocalStatement",
-      ["variables"] = {
-        [1] = {
-          ["name"] = "shr",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 16,
-              ["col"] = 7,
-            },
-            ["start"] = {
-              ["line"] = 16,
-              ["col"] = 7,
-            },
-          },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["swap_operands"] = false,
+          ["operator"] = ">>",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = ">>",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
           },
         },
       },
     },
     [11] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 22,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 19,
-          ["col"] = 1,
-        },
-      },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "//",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "3",
-          },
-          ["original_left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 10,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "10",
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 10,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "10",
-          },
-          ["substituted_operator"] = "//",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__idiv",
-          ["original_right"] = {
-            ["is_lua53_feature"] = false,
-            ["value"] = 3,
-            ["type"] = "NumericLiteral",
-            ["raw"] = "3",
-          },
-        },
-      },
-      ["type"] = "LocalStatement",
       ["variables"] = {
         [1] = {
-          ["name"] = "idiv",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 19,
+            ["start"] = {
+              ["line"] = 16,
               ["col"] = 7,
             },
-            ["start"] = {
-              ["line"] = 19,
+            ["end"] = {
+              ["line"] = 16,
               ["col"] = 7,
             },
           },
+          ["name"] = "idiv",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
         },
       },
+      ["comments"] = {
+        ["leading"] = {
+          [1] = {
+            ["line"] = 14,
+            ["raw"] = "-- Shift right: 16",
+            ["value"] = " Shift right: 16",
+            ["type"] = "COMMENT",
+            ["col"] = 33,
+          },
+        },
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 16,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 18,
+          ["col"] = 1,
+        },
+      },
+      ["type"] = "LocalStatement",
+      ["init"] = {
+        [1] = {
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__idiv",
+          ["original_left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "10",
+            ["type"] = "NumericLiteral",
+            ["value"] = 10,
+          },
+          ["left"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "10",
+            ["type"] = "NumericLiteral",
+            ["value"] = 10,
+          },
+          ["original_right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "//",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "//",
+          ["right"] = {
+            ["is_lua53_feature"] = false,
+            ["raw"] = "3",
+            ["type"] = "NumericLiteral",
+            ["value"] = 3,
+          },
+        },
+      },
     },
     [12] = {
-      ["type"] = "FunctionDeclaration",
       ["body"] = {
         [1] = {
+          ["variables"] = {
+            [1] = {
+              ["loc"] = {
+                ["start"] = {
+                  ["line"] = 19,
+                  ["col"] = 11,
+                },
+                ["end"] = {
+                  ["line"] = 19,
+                  ["col"] = 11,
+                },
+              },
+              ["name"] = "results",
+              ["type"] = "Identifier",
+              ["attributes"] = {
+              },
+            },
+          },
+          ["comments"] = {
+            ["leading"] = {
+              [1] = {
+                ["line"] = 16,
+                ["raw"] = "-- Integer division: 3",
+                ["value"] = " Integer division: 3",
+                ["type"] = "COMMENT",
+                ["col"] = 33,
+              },
+            },
+          },
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 24,
+            ["start"] = {
+              ["line"] = 19,
               ["col"] = 5,
             },
-            ["start"] = {
-              ["line"] = 23,
+            ["end"] = {
+              ["line"] = 20,
               ["col"] = 5,
             },
           },
+          ["type"] = "LocalStatement",
           ["init"] = {
             [1] = {
               ["metamethods"] = {
@@ -638,140 +789,121 @@ return {
               },
             },
           },
-          ["type"] = "LocalStatement",
-          ["variables"] = {
-            [1] = {
-              ["name"] = "results",
-              ["loc"] = {
-                ["end"] = {
-                  ["line"] = 23,
-                  ["col"] = 11,
-                },
-                ["start"] = {
-                  ["line"] = 23,
-                  ["col"] = 11,
-                },
-              },
-              ["type"] = "Identifier",
-              ["attributes"] = {
-              },
-            },
-          },
         },
         [2] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "band",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 24,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 24,
-                    ["col"] = 13,
+                    ["line"] = 20,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 20,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 24,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 24,
-                    ["col"] = 5,
+                    ["line"] = 20,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 20,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "band",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["name"] = "b",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 24,
-                    ["col"] = 24,
-                  },
-                  ["start"] = {
-                    ["line"] = 24,
-                    ["col"] = 24,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 24,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 24,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 24,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 24,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["name"] = "b",
+              ["original_left"] = {
                 ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 20,
+                    ["col"] = 20,
+                  },
                   ["end"] = {
-                    ["line"] = 24,
+                    ["line"] = 20,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 20,
+                    ["col"] = 20,
+                  },
+                  ["end"] = {
+                    ["line"] = 20,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["original_right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 20,
                     ["col"] = 24,
                   },
-                  ["start"] = {
-                    ["line"] = 24,
+                  ["end"] = {
+                    ["line"] = 20,
                     ["col"] = 24,
                   },
                 },
+                ["name"] = "b",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 20,
+                    ["col"] = 24,
+                  },
+                  ["end"] = {
+                    ["line"] = 20,
+                    ["col"] = 24,
+                  },
+                },
+                ["name"] = "b",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -780,119 +912,119 @@ return {
           },
         },
         [3] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "bor",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 25,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 25,
-                    ["col"] = 13,
+                    ["line"] = 21,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 21,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 25,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 25,
-                    ["col"] = 5,
+                    ["line"] = 21,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 21,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "bor",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "|",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["name"] = "b",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 25,
-                    ["col"] = 23,
-                  },
-                  ["start"] = {
-                    ["line"] = 25,
-                    ["col"] = 23,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 25,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 25,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 25,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 25,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = "|",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__bor",
-              ["original_right"] = {
-                ["name"] = "b",
+              ["original_left"] = {
                 ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 21,
+                    ["col"] = 19,
+                  },
                   ["end"] = {
-                    ["line"] = 25,
+                    ["line"] = 21,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 21,
+                    ["col"] = 19,
+                  },
+                  ["end"] = {
+                    ["line"] = 21,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["original_right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 21,
                     ["col"] = 23,
                   },
-                  ["start"] = {
-                    ["line"] = 25,
+                  ["end"] = {
+                    ["line"] = 21,
                     ["col"] = 23,
                   },
                 },
+                ["name"] = "b",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "|",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "|",
+              ["right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 21,
+                    ["col"] = 23,
+                  },
+                  ["end"] = {
+                    ["line"] = 21,
+                    ["col"] = 23,
+                  },
+                },
+                ["name"] = "b",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -901,119 +1033,119 @@ return {
           },
         },
         [4] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "bxor",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 26,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 26,
-                    ["col"] = 13,
+                    ["line"] = 22,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 22,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 26,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 26,
-                    ["col"] = 5,
+                    ["line"] = 22,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 22,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "bxor",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "~",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["name"] = "b",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 26,
-                    ["col"] = 24,
-                  },
-                  ["start"] = {
-                    ["line"] = 26,
-                    ["col"] = 24,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 26,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 26,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 26,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 26,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = "~",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__bxor",
-              ["original_right"] = {
-                ["name"] = "b",
+              ["original_left"] = {
                 ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 22,
+                    ["col"] = 20,
+                  },
                   ["end"] = {
-                    ["line"] = 26,
+                    ["line"] = 22,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 22,
+                    ["col"] = 20,
+                  },
+                  ["end"] = {
+                    ["line"] = 22,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["original_right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 22,
                     ["col"] = 24,
                   },
-                  ["start"] = {
-                    ["line"] = 26,
+                  ["end"] = {
+                    ["line"] = 22,
                     ["col"] = 24,
                   },
                 },
+                ["name"] = "b",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "~",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "~",
+              ["right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 22,
+                    ["col"] = 24,
+                  },
+                  ["end"] = {
+                    ["line"] = 22,
+                    ["col"] = 24,
+                  },
+                },
+                ["name"] = "b",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -1022,390 +1154,390 @@ return {
           },
         },
         [5] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "bnot",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 27,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 27,
-                    ["col"] = 13,
+                    ["line"] = 23,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 23,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 27,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 27,
-                    ["col"] = 5,
+                    ["line"] = 23,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 23,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "bnot",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "~",
-              ["type"] = "UnaryExpression",
-              ["has_metamethod"] = true,
+              ["potential_metamethod"] = "__bnot",
               ["argument"] = {
-                ["name"] = "a",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 27,
+                  ["start"] = {
+                    ["line"] = 23,
                     ["col"] = 21,
                   },
-                  ["start"] = {
-                    ["line"] = 27,
+                  ["end"] = {
+                    ["line"] = 23,
                     ["col"] = 21,
                   },
                 },
+                ["name"] = "a",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["potential_metamethod"] = "__bnot",
+              ["operator"] = "~",
+              ["is_lua53_feature"] = true,
+              ["type"] = "UnaryExpression",
+              ["has_metamethod"] = true,
             },
           },
         },
         [6] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "shl",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 28,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 28,
-                    ["col"] = 13,
+                    ["line"] = 24,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 24,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 28,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 28,
-                    ["col"] = 5,
+                    ["line"] = 24,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 24,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "shl",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "<<",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 2,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "2",
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 28,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 28,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 28,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 28,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = "<<",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__shl",
+              ["original_left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 24,
+                    ["col"] = 19,
+                  },
+                  ["end"] = {
+                    ["line"] = 24,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 24,
+                    ["col"] = 19,
+                  },
+                  ["end"] = {
+                    ["line"] = 24,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
               ["original_right"] = {
                 ["is_lua53_feature"] = false,
-                ["value"] = 2,
-                ["type"] = "NumericLiteral",
                 ["raw"] = "2",
+                ["type"] = "NumericLiteral",
+                ["value"] = 2,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "<<",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "<<",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "2",
+                ["type"] = "NumericLiteral",
+                ["value"] = 2,
               },
             },
           },
         },
         [7] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "shr",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 29,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 29,
-                    ["col"] = 13,
+                    ["line"] = 25,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 25,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 29,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 29,
-                    ["col"] = 5,
+                    ["line"] = 25,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 25,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "shr",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = ">>",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 1,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "1",
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 29,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 29,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 29,
-                    ["col"] = 19,
-                  },
-                  ["start"] = {
-                    ["line"] = 29,
-                    ["col"] = 19,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = ">>",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__shr",
+              ["original_left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 25,
+                    ["col"] = 19,
+                  },
+                  ["end"] = {
+                    ["line"] = 25,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 25,
+                    ["col"] = 19,
+                  },
+                  ["end"] = {
+                    ["line"] = 25,
+                    ["col"] = 19,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
               ["original_right"] = {
                 ["is_lua53_feature"] = false,
-                ["value"] = 1,
-                ["type"] = "NumericLiteral",
                 ["raw"] = "1",
+                ["type"] = "NumericLiteral",
+                ["value"] = 1,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = ">>",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = ">>",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "1",
+                ["type"] = "NumericLiteral",
+                ["value"] = 1,
               },
             },
           },
         },
         [8] = {
-          ["type"] = "AssignmentStatement",
           ["metamethod_ops"] = {
           },
-          ["has_metamethods"] = false,
           ["variables"] = {
             [1] = {
-              ["identifier"] = {
-                ["name"] = "idiv",
+              ["indexer"] = ".",
+              ["base"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 30,
-                    ["col"] = 13,
-                  },
                   ["start"] = {
-                    ["line"] = 30,
-                    ["col"] = 13,
+                    ["line"] = 26,
+                    ["col"] = 5,
+                  },
+                  ["end"] = {
+                    ["line"] = 26,
+                    ["col"] = 5,
                   },
                 },
+                ["name"] = "results",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
-              ["indexer"] = ".",
               ["type"] = "MemberExpression",
-              ["base"] = {
-                ["name"] = "results",
+              ["identifier"] = {
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 30,
-                    ["col"] = 5,
-                  },
                   ["start"] = {
-                    ["line"] = 30,
-                    ["col"] = 5,
+                    ["line"] = 26,
+                    ["col"] = 13,
+                  },
+                  ["end"] = {
+                    ["line"] = 26,
+                    ["col"] = 13,
                   },
                 },
+                ["name"] = "idiv",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
             },
           },
+          ["has_metamethods"] = false,
+          ["type"] = "AssignmentStatement",
           ["init"] = {
             [1] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "//",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["name"] = "b",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 30,
-                    ["col"] = 25,
-                  },
-                  ["start"] = {
-                    ["line"] = 30,
-                    ["col"] = 25,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["original_left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 30,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 30,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["name"] = "a",
-                ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 30,
-                    ["col"] = 20,
-                  },
-                  ["start"] = {
-                    ["line"] = 30,
-                    ["col"] = 20,
-                  },
-                },
-                ["type"] = "Identifier",
-                ["attributes"] = {
-                },
-              },
-              ["substituted_operator"] = "//",
-              ["has_metamethod"] = true,
               ["negate_result"] = false,
-              ["swap_operands"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
               ["potential_metamethod"] = "__idiv",
-              ["original_right"] = {
-                ["name"] = "b",
+              ["original_left"] = {
                 ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 26,
+                    ["col"] = 20,
+                  },
                   ["end"] = {
-                    ["line"] = 30,
+                    ["line"] = 26,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["left"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 26,
+                    ["col"] = 20,
+                  },
+                  ["end"] = {
+                    ["line"] = 26,
+                    ["col"] = 20,
+                  },
+                },
+                ["name"] = "a",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["original_right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 26,
                     ["col"] = 25,
                   },
-                  ["start"] = {
-                    ["line"] = 30,
+                  ["end"] = {
+                    ["line"] = 26,
                     ["col"] = 25,
                   },
                 },
+                ["name"] = "b",
+                ["type"] = "Identifier",
+                ["attributes"] = {
+                },
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "//",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "//",
+              ["right"] = {
+                ["loc"] = {
+                  ["start"] = {
+                    ["line"] = 26,
+                    ["col"] = 25,
+                  },
+                  ["end"] = {
+                    ["line"] = 26,
+                    ["col"] = 25,
+                  },
+                },
+                ["name"] = "b",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -1417,17 +1549,17 @@ return {
           ["type"] = "ReturnStatement",
           ["arguments"] = {
             [1] = {
-              ["name"] = "results",
               ["loc"] = {
-                ["end"] = {
-                  ["line"] = 31,
+                ["start"] = {
+                  ["line"] = 27,
                   ["col"] = 12,
                 },
-                ["start"] = {
-                  ["line"] = 31,
+                ["end"] = {
+                  ["line"] = 27,
                   ["col"] = 12,
                 },
               },
+              ["name"] = "results",
               ["type"] = "Identifier",
               ["attributes"] = {
               },
@@ -1436,509 +1568,514 @@ return {
         },
       },
       ["isLocal"] = true,
+      ["identifier"] = {
+        ["loc"] = {
+          ["start"] = {
+            ["line"] = 18,
+            ["col"] = 16,
+          },
+          ["end"] = {
+            ["line"] = 18,
+            ["col"] = 16,
+          },
+        },
+        ["name"] = "bitwise_ops",
+        ["type"] = "Identifier",
+        ["attributes"] = {
+        },
+      },
+      ["type"] = "FunctionDeclaration",
       ["parameters"] = {
         [1] = {
-          ["name"] = "a",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 22,
+            ["start"] = {
+              ["line"] = 18,
               ["col"] = 28,
             },
-            ["start"] = {
-              ["line"] = 22,
+            ["end"] = {
+              ["line"] = 18,
               ["col"] = 28,
             },
           },
+          ["name"] = "a",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
         },
         [2] = {
-          ["name"] = "b",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 22,
+            ["start"] = {
+              ["line"] = 18,
               ["col"] = 31,
             },
-            ["start"] = {
-              ["line"] = 22,
+            ["end"] = {
+              ["line"] = 18,
               ["col"] = 31,
             },
           },
+          ["name"] = "b",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
-        },
-      },
-      ["identifier"] = {
-        ["name"] = "bitwise_ops",
-        ["loc"] = {
-          ["end"] = {
-            ["line"] = 22,
-            ["col"] = 16,
-          },
-          ["start"] = {
-            ["line"] = 22,
-            ["col"] = 16,
-          },
-        },
-        ["type"] = "Identifier",
-        ["attributes"] = {
         },
       },
     },
     [13] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 38,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 35,
-          ["col"] = 1,
+      ["variables"] = {
+        [1] = {
+          ["loc"] = {
+            ["start"] = {
+              ["line"] = 30,
+              ["col"] = 7,
+            },
+            ["end"] = {
+              ["line"] = 30,
+              ["col"] = 7,
+            },
+          },
+          ["name"] = "complex",
+          ["type"] = "Identifier",
+          ["attributes"] = {
+          },
         },
       },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["operator"] = "|",
-          ["type"] = "BinaryExpression",
-          ["right"] = {
-            ["is_lua53_feature"] = true,
-            ["operator"] = ">>",
-            ["type"] = "BinaryExpression",
-            ["right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 1,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "1",
-            },
-            ["original_left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["lua53_feature"] = true,
-            ["left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["substituted_operator"] = ">>",
-            ["has_metamethod"] = true,
-            ["negate_result"] = false,
-            ["swap_operands"] = false,
-            ["potential_metamethod"] = "__shr",
-            ["original_right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 1,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "1",
-            },
-          },
-          ["original_left"] = {
-            ["is_lua53_feature"] = true,
-            ["operator"] = "<<",
-            ["type"] = "BinaryExpression",
-            ["right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 2,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "2",
-            },
-            ["original_left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["lua53_feature"] = true,
-            ["left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["substituted_operator"] = "<<",
-            ["has_metamethod"] = true,
-            ["negate_result"] = false,
-            ["swap_operands"] = false,
-            ["potential_metamethod"] = "__shl",
-            ["original_right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 2,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "2",
-            },
-          },
-          ["lua53_feature"] = true,
-          ["left"] = {
-            ["is_lua53_feature"] = true,
-            ["operator"] = "<<",
-            ["type"] = "BinaryExpression",
-            ["right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 2,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "2",
-            },
-            ["original_left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["lua53_feature"] = true,
-            ["left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 255,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xFF",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["substituted_operator"] = "<<",
-            ["has_metamethod"] = true,
-            ["negate_result"] = false,
-            ["swap_operands"] = false,
-            ["potential_metamethod"] = "__shl",
-            ["original_right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 2,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "2",
-            },
-          },
-          ["substituted_operator"] = "|",
-          ["has_metamethod"] = true,
-          ["negate_result"] = false,
-          ["swap_operands"] = false,
-          ["potential_metamethod"] = "__bor",
-          ["original_right"] = {
-            ["is_lua53_feature"] = true,
-            ["operator"] = ">>",
-            ["type"] = "BinaryExpression",
-            ["right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 1,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "1",
-            },
-            ["original_left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["lua53_feature"] = true,
-            ["left"] = {
-              ["is_lua53_feature"] = true,
-              ["operator"] = "&",
-              ["type"] = "BinaryExpression",
-              ["right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-              ["original_left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["lua53_feature"] = true,
-              ["left"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 240,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0xF0",
-              },
-              ["substituted_operator"] = "&",
-              ["has_metamethod"] = true,
-              ["negate_result"] = false,
-              ["swap_operands"] = false,
-              ["potential_metamethod"] = "__band",
-              ["original_right"] = {
-                ["is_lua53_feature"] = false,
-                ["value"] = 15,
-                ["type"] = "NumericLiteral",
-                ["raw"] = "0x0F",
-              },
-            },
-            ["substituted_operator"] = ">>",
-            ["has_metamethod"] = true,
-            ["negate_result"] = false,
-            ["swap_operands"] = false,
-            ["potential_metamethod"] = "__shr",
-            ["original_right"] = {
-              ["is_lua53_feature"] = false,
-              ["value"] = 1,
-              ["type"] = "NumericLiteral",
-              ["raw"] = "1",
-            },
-          },
+      ["comments"] = {
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 30,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 32,
+          ["col"] = 1,
         },
       },
       ["type"] = "LocalStatement",
-      ["variables"] = {
+      ["init"] = {
         [1] = {
-          ["name"] = "complex",
-          ["loc"] = {
-            ["end"] = {
-              ["line"] = 35,
-              ["col"] = 7,
+          ["negate_result"] = false,
+          ["has_metamethod"] = true,
+          ["lua53_feature"] = true,
+          ["type"] = "BinaryExpression",
+          ["potential_metamethod"] = "__bor",
+          ["original_left"] = {
+            ["negate_result"] = false,
+            ["has_metamethod"] = true,
+            ["lua53_feature"] = true,
+            ["type"] = "BinaryExpression",
+            ["potential_metamethod"] = "__shl",
+            ["original_left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
             },
-            ["start"] = {
-              ["line"] = 35,
-              ["col"] = 7,
+            ["left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["original_right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "2",
+              ["type"] = "NumericLiteral",
+              ["value"] = 2,
+            },
+            ["swap_operands"] = false,
+            ["operator"] = "<<",
+            ["is_lua53_feature"] = true,
+            ["substituted_operator"] = "<<",
+            ["right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "2",
+              ["type"] = "NumericLiteral",
+              ["value"] = 2,
             },
           },
-          ["type"] = "Identifier",
-          ["attributes"] = {
+          ["left"] = {
+            ["negate_result"] = false,
+            ["has_metamethod"] = true,
+            ["lua53_feature"] = true,
+            ["type"] = "BinaryExpression",
+            ["potential_metamethod"] = "__shl",
+            ["original_left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xFF",
+                ["type"] = "NumericLiteral",
+                ["value"] = 255,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["original_right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "2",
+              ["type"] = "NumericLiteral",
+              ["value"] = 2,
+            },
+            ["swap_operands"] = false,
+            ["operator"] = "<<",
+            ["is_lua53_feature"] = true,
+            ["substituted_operator"] = "<<",
+            ["right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "2",
+              ["type"] = "NumericLiteral",
+              ["value"] = 2,
+            },
+          },
+          ["original_right"] = {
+            ["negate_result"] = false,
+            ["has_metamethod"] = true,
+            ["lua53_feature"] = true,
+            ["type"] = "BinaryExpression",
+            ["potential_metamethod"] = "__shr",
+            ["original_left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["original_right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "1",
+              ["type"] = "NumericLiteral",
+              ["value"] = 1,
+            },
+            ["swap_operands"] = false,
+            ["operator"] = ">>",
+            ["is_lua53_feature"] = true,
+            ["substituted_operator"] = ">>",
+            ["right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "1",
+              ["type"] = "NumericLiteral",
+              ["value"] = 1,
+            },
+          },
+          ["swap_operands"] = false,
+          ["operator"] = "|",
+          ["is_lua53_feature"] = true,
+          ["substituted_operator"] = "|",
+          ["right"] = {
+            ["negate_result"] = false,
+            ["has_metamethod"] = true,
+            ["lua53_feature"] = true,
+            ["type"] = "BinaryExpression",
+            ["potential_metamethod"] = "__shr",
+            ["original_left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["left"] = {
+              ["negate_result"] = false,
+              ["has_metamethod"] = true,
+              ["lua53_feature"] = true,
+              ["type"] = "BinaryExpression",
+              ["potential_metamethod"] = "__band",
+              ["original_left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["left"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0xF0",
+                ["type"] = "NumericLiteral",
+                ["value"] = 240,
+              },
+              ["original_right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+              ["swap_operands"] = false,
+              ["operator"] = "&",
+              ["is_lua53_feature"] = true,
+              ["substituted_operator"] = "&",
+              ["right"] = {
+                ["is_lua53_feature"] = false,
+                ["raw"] = "0x0F",
+                ["type"] = "NumericLiteral",
+                ["value"] = 15,
+              },
+            },
+            ["original_right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "1",
+              ["type"] = "NumericLiteral",
+              ["value"] = 1,
+            },
+            ["swap_operands"] = false,
+            ["operator"] = ">>",
+            ["is_lua53_feature"] = true,
+            ["substituted_operator"] = ">>",
+            ["right"] = {
+              ["is_lua53_feature"] = false,
+              ["raw"] = "1",
+              ["type"] = "NumericLiteral",
+              ["value"] = 1,
+            },
           },
         },
       },
     },
     [14] = {
-      ["loc"] = {
-        ["end"] = {
-          ["line"] = 41,
-          ["col"] = 1,
-        },
-        ["start"] = {
-          ["line"] = 38,
-          ["col"] = 1,
-        },
-      },
-      ["init"] = {
-        [1] = {
-          ["is_lua53_feature"] = true,
-          ["value"] = 3.1415926535898,
-          ["type"] = "NumericLiteral",
-          ["raw"] = "0x1.921fb54442d18p+1",
-        },
-      },
-      ["type"] = "LocalStatement",
       ["variables"] = {
         [1] = {
-          ["name"] = "pi_hex",
           ["loc"] = {
-            ["end"] = {
-              ["line"] = 38,
+            ["start"] = {
+              ["line"] = 32,
               ["col"] = 7,
             },
-            ["start"] = {
-              ["line"] = 38,
+            ["end"] = {
+              ["line"] = 32,
               ["col"] = 7,
             },
           },
+          ["name"] = "pi_hex",
           ["type"] = "Identifier",
           ["attributes"] = {
           },
+        },
+      },
+      ["comments"] = {
+      },
+      ["loc"] = {
+        ["start"] = {
+          ["line"] = 32,
+          ["col"] = 1,
+        },
+        ["end"] = {
+          ["line"] = 34,
+          ["col"] = 1,
+        },
+      },
+      ["type"] = "LocalStatement",
+      ["init"] = {
+        [1] = {
+          ["is_lua53_feature"] = true,
+          ["raw"] = "0x1.921fb54442d18p+1",
+          ["type"] = "NumericLiteral",
+          ["value"] = 3.1415926535898,
         },
       },
     },
@@ -1953,34 +2090,34 @@ return {
           ["fields"] = {
             [1] = {
               ["value"] = {
-                ["name"] = "num",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 42,
+                  ["start"] = {
+                    ["line"] = 35,
                     ["col"] = 11,
                   },
-                  ["start"] = {
-                    ["line"] = 42,
+                  ["end"] = {
+                    ["line"] = 35,
                     ["col"] = 11,
                   },
                 },
+                ["name"] = "num",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "num",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 42,
+                  ["start"] = {
+                    ["line"] = 35,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 42,
+                  ["end"] = {
+                    ["line"] = 35,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "num",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -1988,34 +2125,34 @@ return {
             },
             [2] = {
               ["value"] = {
-                ["name"] = "float",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 43,
+                  ["start"] = {
+                    ["line"] = 36,
                     ["col"] = 13,
                   },
-                  ["start"] = {
-                    ["line"] = 43,
+                  ["end"] = {
+                    ["line"] = 36,
                     ["col"] = 13,
                   },
                 },
+                ["name"] = "float",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "float",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 43,
+                  ["start"] = {
+                    ["line"] = 36,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 43,
+                  ["end"] = {
+                    ["line"] = 36,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "float",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2023,34 +2160,34 @@ return {
             },
             [3] = {
               ["value"] = {
-                ["name"] = "hex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 44,
+                  ["start"] = {
+                    ["line"] = 37,
                     ["col"] = 11,
                   },
-                  ["start"] = {
-                    ["line"] = 44,
+                  ["end"] = {
+                    ["line"] = 37,
                     ["col"] = 11,
                   },
                 },
+                ["name"] = "hex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "hex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 44,
+                  ["start"] = {
+                    ["line"] = 37,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 44,
+                  ["end"] = {
+                    ["line"] = 37,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "hex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2058,34 +2195,34 @@ return {
             },
             [4] = {
               ["value"] = {
-                ["name"] = "hex_float",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 45,
+                  ["start"] = {
+                    ["line"] = 38,
                     ["col"] = 17,
                   },
-                  ["start"] = {
-                    ["line"] = 45,
+                  ["end"] = {
+                    ["line"] = 38,
                     ["col"] = 17,
                   },
                 },
+                ["name"] = "hex_float",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "hex_float",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 45,
+                  ["start"] = {
+                    ["line"] = 38,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 45,
+                  ["end"] = {
+                    ["line"] = 38,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "hex_float",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2093,34 +2230,34 @@ return {
             },
             [5] = {
               ["value"] = {
-                ["name"] = "pi_hex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 46,
+                  ["start"] = {
+                    ["line"] = 39,
                     ["col"] = 14,
                   },
-                  ["start"] = {
-                    ["line"] = 46,
+                  ["end"] = {
+                    ["line"] = 39,
                     ["col"] = 14,
                   },
                 },
+                ["name"] = "pi_hex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "pi_hex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 46,
+                  ["start"] = {
+                    ["line"] = 39,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 46,
+                  ["end"] = {
+                    ["line"] = 39,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "pi_hex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2135,34 +2272,34 @@ return {
                 ["fields"] = {
                   [1] = {
                     ["value"] = {
-                      ["name"] = "band",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 48,
+                        ["start"] = {
+                          ["line"] = 41,
                           ["col"] = 16,
                         },
-                        ["start"] = {
-                          ["line"] = 48,
+                        ["end"] = {
+                          ["line"] = 41,
                           ["col"] = 16,
                         },
                       },
+                      ["name"] = "band",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "band",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 48,
+                        ["start"] = {
+                          ["line"] = 41,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 48,
+                        ["end"] = {
+                          ["line"] = 41,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "band",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2170,34 +2307,34 @@ return {
                   },
                   [2] = {
                     ["value"] = {
-                      ["name"] = "bor",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 49,
+                        ["start"] = {
+                          ["line"] = 42,
                           ["col"] = 15,
                         },
-                        ["start"] = {
-                          ["line"] = 49,
+                        ["end"] = {
+                          ["line"] = 42,
                           ["col"] = 15,
                         },
                       },
+                      ["name"] = "bor",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "bor",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 49,
+                        ["start"] = {
+                          ["line"] = 42,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 49,
+                        ["end"] = {
+                          ["line"] = 42,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "bor",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2205,34 +2342,34 @@ return {
                   },
                   [3] = {
                     ["value"] = {
-                      ["name"] = "bxor",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 50,
+                        ["start"] = {
+                          ["line"] = 43,
                           ["col"] = 16,
                         },
-                        ["start"] = {
-                          ["line"] = 50,
+                        ["end"] = {
+                          ["line"] = 43,
                           ["col"] = 16,
                         },
                       },
+                      ["name"] = "bxor",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "bxor",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 50,
+                        ["start"] = {
+                          ["line"] = 43,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 50,
+                        ["end"] = {
+                          ["line"] = 43,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "bxor",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2240,34 +2377,34 @@ return {
                   },
                   [4] = {
                     ["value"] = {
-                      ["name"] = "bnot",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 51,
+                        ["start"] = {
+                          ["line"] = 44,
                           ["col"] = 16,
                         },
-                        ["start"] = {
-                          ["line"] = 51,
+                        ["end"] = {
+                          ["line"] = 44,
                           ["col"] = 16,
                         },
                       },
+                      ["name"] = "bnot",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "bnot",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 51,
+                        ["start"] = {
+                          ["line"] = 44,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 51,
+                        ["end"] = {
+                          ["line"] = 44,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "bnot",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2275,34 +2412,34 @@ return {
                   },
                   [5] = {
                     ["value"] = {
-                      ["name"] = "shl",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 52,
+                        ["start"] = {
+                          ["line"] = 45,
                           ["col"] = 15,
                         },
-                        ["start"] = {
-                          ["line"] = 52,
+                        ["end"] = {
+                          ["line"] = 45,
                           ["col"] = 15,
                         },
                       },
+                      ["name"] = "shl",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "shl",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 52,
+                        ["start"] = {
+                          ["line"] = 45,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 52,
+                        ["end"] = {
+                          ["line"] = 45,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "shl",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2310,34 +2447,34 @@ return {
                   },
                   [6] = {
                     ["value"] = {
-                      ["name"] = "shr",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 53,
+                        ["start"] = {
+                          ["line"] = 46,
                           ["col"] = 15,
                         },
-                        ["start"] = {
-                          ["line"] = 53,
+                        ["end"] = {
+                          ["line"] = 46,
                           ["col"] = 15,
                         },
                       },
+                      ["name"] = "shr",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
                     },
                     ["type"] = "TableKeyString",
                     ["key"] = {
-                      ["name"] = "shr",
                       ["loc"] = {
-                        ["end"] = {
-                          ["line"] = 53,
+                        ["start"] = {
+                          ["line"] = 46,
                           ["col"] = 9,
                         },
-                        ["start"] = {
-                          ["line"] = 53,
+                        ["end"] = {
+                          ["line"] = 46,
                           ["col"] = 9,
                         },
                       },
+                      ["name"] = "shr",
                       ["type"] = "Identifier",
                       ["attributes"] = {
                       },
@@ -2347,17 +2484,17 @@ return {
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "bitwise",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 47,
+                  ["start"] = {
+                    ["line"] = 40,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 47,
+                  ["end"] = {
+                    ["line"] = 40,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "bitwise",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2365,34 +2502,34 @@ return {
             },
             [7] = {
               ["value"] = {
-                ["name"] = "idiv",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 55,
+                  ["start"] = {
+                    ["line"] = 48,
                     ["col"] = 12,
                   },
-                  ["start"] = {
-                    ["line"] = 55,
+                  ["end"] = {
+                    ["line"] = 48,
                     ["col"] = 12,
                   },
                 },
+                ["name"] = "idiv",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "idiv",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 55,
+                  ["start"] = {
+                    ["line"] = 48,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 55,
+                  ["end"] = {
+                    ["line"] = 48,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "idiv",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2400,34 +2537,34 @@ return {
             },
             [8] = {
               ["value"] = {
-                ["name"] = "complex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 56,
+                  ["start"] = {
+                    ["line"] = 49,
                     ["col"] = 15,
                   },
-                  ["start"] = {
-                    ["line"] = 56,
+                  ["end"] = {
+                    ["line"] = 49,
                     ["col"] = 15,
                   },
                 },
+                ["name"] = "complex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "complex",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 56,
+                  ["start"] = {
+                    ["line"] = 49,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 56,
+                  ["end"] = {
+                    ["line"] = 49,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "complex",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2435,34 +2572,34 @@ return {
             },
             [9] = {
               ["value"] = {
-                ["name"] = "_VERSION",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 57,
+                  ["start"] = {
+                    ["line"] = 50,
                     ["col"] = 19,
                   },
-                  ["start"] = {
-                    ["line"] = 57,
+                  ["end"] = {
+                    ["line"] = 50,
                     ["col"] = 19,
                   },
                 },
+                ["name"] = "_VERSION",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
               },
               ["type"] = "TableKeyString",
               ["key"] = {
-                ["name"] = "lua_version",
                 ["loc"] = {
-                  ["end"] = {
-                    ["line"] = 57,
+                  ["start"] = {
+                    ["line"] = 50,
                     ["col"] = 5,
                   },
-                  ["start"] = {
-                    ["line"] = 57,
+                  ["end"] = {
+                    ["line"] = 50,
                     ["col"] = 5,
                   },
                 },
+                ["name"] = "lua_version",
                 ["type"] = "Identifier",
                 ["attributes"] = {
                 },
@@ -2473,1477 +2610,1584 @@ return {
       },
     },
   },
+  ["type"] = "Chunk",
+  ["comments"] = {
+    [1] = {
+      ["line"] = 1,
+      ["raw"] = "--[[[\
+    Dev : NexusScripts\
+]]",
+      ["value"] = "[[[\
+    Dev : NexusScripts\
+]]",
+      ["type"] = "COMMENT",
+      ["col"] = 1,
+    },
+    [2] = {
+      ["line"] = 4,
+      ["raw"] = "-- Integer",
+      ["value"] = " Integer",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [3] = {
+      ["line"] = 5,
+      ["raw"] = "-- Decimal float",
+      ["value"] = " Decimal float",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [4] = {
+      ["line"] = 6,
+      ["raw"] = "-- Hexadecimal integer (255)",
+      ["value"] = " Hexadecimal integer (255)",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [5] = {
+      ["line"] = 7,
+      ["raw"] = "-- Hex float (256.0) - Lua 5.3 feature",
+      ["value"] = " Hex float (256.0) - Lua 5.3 feature",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [6] = {
+      ["line"] = 9,
+      ["raw"] = "-- Bitwise AND: 15",
+      ["value"] = " Bitwise AND: 15",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [7] = {
+      ["line"] = 10,
+      ["raw"] = "-- Bitwise OR: 255 ",
+      ["value"] = " Bitwise OR: 255 ",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [8] = {
+      ["line"] = 11,
+      ["raw"] = "-- Bitwise XOR: 240",
+      ["value"] = " Bitwise XOR: 240",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [9] = {
+      ["line"] = 12,
+      ["raw"] = "-- Bitwise NOT: -16",
+      ["value"] = " Bitwise NOT: -16",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [10] = {
+      ["line"] = 13,
+      ["raw"] = "-- Shift left: 8",
+      ["value"] = " Shift left: 8",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [11] = {
+      ["line"] = 14,
+      ["raw"] = "-- Shift right: 16",
+      ["value"] = " Shift right: 16",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [12] = {
+      ["line"] = 16,
+      ["raw"] = "-- Integer division: 3",
+      ["value"] = " Integer division: 3",
+      ["type"] = "COMMENT",
+      ["col"] = 33,
+    },
+    [13] = {
+      ["line"] = 50,
+      ["raw"] = "-- Should be \"Lua 5.3\" or later",
+      ["value"] = " Should be \"Lua 5.3\" or later",
+      ["type"] = "COMMENT",
+      ["col"] = 28,
+    },
+    ["leading"] = {
+      [1] = {
+        ["line"] = 50,
+        ["raw"] = "-- Should be \"Lua 5.3\" or later",
+        ["value"] = " Should be \"Lua 5.3\" or later",
+        ["type"] = "COMMENT",
+        ["col"] = 28,
+      },
+    },
+  },
 },
   tokens = {
   [1] = {
+    ["line"] = 4,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 5,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [2] = {
+    ["line"] = 4,
+    ["raw"] = "num",
+    ["value"] = "num",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 5,
-    ["value"] = "num",
-    ["raw"] = "num",
   },
   [3] = {
+    ["line"] = 4,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 5,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [4] = {
+    ["line"] = 4,
+    ["raw"] = "42",
+    ["value"] = 42,
     ["type"] = "NUMBER",
     ["col"] = 13,
-    ["line"] = 5,
-    ["value"] = 42,
-    ["raw"] = "42",
   },
   [5] = {
+    ["line"] = 5,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 6,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [6] = {
+    ["line"] = 5,
+    ["raw"] = "float",
+    ["value"] = "float",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 6,
-    ["value"] = "float",
-    ["raw"] = "float",
   },
   [7] = {
+    ["line"] = 5,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 6,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [8] = {
+    ["line"] = 5,
+    ["raw"] = "3.14159",
+    ["value"] = 3.14159,
     ["type"] = "NUMBER",
     ["col"] = 15,
-    ["line"] = 6,
-    ["value"] = 3.14159,
-    ["raw"] = "3.14159",
   },
   [9] = {
+    ["line"] = 6,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 7,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [10] = {
+    ["line"] = 6,
+    ["raw"] = "hex",
+    ["value"] = "hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 7,
-    ["value"] = "hex",
-    ["raw"] = "hex",
   },
   [11] = {
+    ["line"] = 6,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 7,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [12] = {
+    ["line"] = 6,
+    ["raw"] = "0xFF",
+    ["value"] = 255,
     ["type"] = "NUMBER",
     ["col"] = 13,
-    ["line"] = 7,
-    ["value"] = 255,
-    ["raw"] = "0xFF",
   },
   [13] = {
+    ["line"] = 7,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 8,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [14] = {
+    ["line"] = 7,
+    ["raw"] = "hex_float",
+    ["value"] = "hex_float",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 8,
-    ["value"] = "hex_float",
-    ["raw"] = "hex_float",
   },
   [15] = {
+    ["line"] = 7,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 17,
-    ["line"] = 8,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [16] = {
+    ["line"] = 7,
+    ["raw"] = "0x1p8",
+    ["value"] = 256.0,
     ["type"] = "NUMBER",
     ["col"] = 19,
-    ["line"] = 8,
-    ["value"] = 256.0,
-    ["raw"] = "0x1p8",
   },
   [17] = {
+    ["line"] = 9,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 11,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [18] = {
+    ["line"] = 9,
+    ["raw"] = "band",
+    ["value"] = "band",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 11,
-    ["value"] = "band",
-    ["raw"] = "band",
   },
   [19] = {
+    ["line"] = 9,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 12,
-    ["line"] = 11,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [20] = {
+    ["line"] = 9,
+    ["raw"] = "0xFF",
+    ["value"] = 255,
     ["type"] = "NUMBER",
     ["col"] = 14,
-    ["line"] = 11,
-    ["value"] = 255,
-    ["raw"] = "0xFF",
   },
   [21] = {
+    ["line"] = 9,
+    ["raw"] = "&",
+    ["value"] = "&",
     ["type"] = "BAND",
     ["col"] = 19,
-    ["line"] = 11,
-    ["value"] = "&",
-    ["raw"] = "&",
   },
   [22] = {
+    ["line"] = 9,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 21,
-    ["line"] = 11,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [23] = {
+    ["line"] = 10,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 12,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [24] = {
+    ["line"] = 10,
+    ["raw"] = "bor",
+    ["value"] = "bor",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 12,
-    ["value"] = "bor",
-    ["raw"] = "bor",
   },
   [25] = {
+    ["line"] = 10,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 12,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [26] = {
+    ["line"] = 10,
+    ["raw"] = "0xF0",
+    ["value"] = 240,
     ["type"] = "NUMBER",
     ["col"] = 13,
-    ["line"] = 12,
-    ["value"] = 240,
-    ["raw"] = "0xF0",
   },
   [27] = {
+    ["line"] = 10,
+    ["raw"] = "|",
+    ["value"] = "|",
     ["type"] = "BOR",
     ["col"] = 18,
-    ["line"] = 12,
-    ["value"] = "|",
-    ["raw"] = "|",
   },
   [28] = {
+    ["line"] = 10,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 20,
-    ["line"] = 12,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [29] = {
+    ["line"] = 11,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 13,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [30] = {
+    ["line"] = 11,
+    ["raw"] = "bxor",
+    ["value"] = "bxor",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 13,
-    ["value"] = "bxor",
-    ["raw"] = "bxor",
   },
   [31] = {
+    ["line"] = 11,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 12,
-    ["line"] = 13,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [32] = {
+    ["line"] = 11,
+    ["raw"] = "0xFF",
+    ["value"] = 255,
     ["type"] = "NUMBER",
     ["col"] = 14,
-    ["line"] = 13,
-    ["value"] = 255,
-    ["raw"] = "0xFF",
   },
   [33] = {
+    ["line"] = 11,
+    ["raw"] = "~",
+    ["value"] = "~",
     ["type"] = "BXOR",
     ["col"] = 19,
-    ["line"] = 13,
-    ["value"] = "~",
-    ["raw"] = "~",
   },
   [34] = {
+    ["line"] = 11,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 21,
-    ["line"] = 13,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [35] = {
+    ["line"] = 12,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 14,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [36] = {
+    ["line"] = 12,
+    ["raw"] = "bnot",
+    ["value"] = "bnot",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 14,
-    ["value"] = "bnot",
-    ["raw"] = "bnot",
   },
   [37] = {
+    ["line"] = 12,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 12,
-    ["line"] = 14,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [38] = {
+    ["line"] = 12,
+    ["raw"] = "~",
+    ["value"] = "~",
     ["type"] = "BXOR",
     ["col"] = 14,
-    ["line"] = 14,
-    ["value"] = "~",
-    ["raw"] = "~",
   },
   [39] = {
+    ["line"] = 12,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 15,
-    ["line"] = 14,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [40] = {
+    ["line"] = 13,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 15,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [41] = {
+    ["line"] = 13,
+    ["raw"] = "shl",
+    ["value"] = "shl",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 15,
-    ["value"] = "shl",
-    ["raw"] = "shl",
   },
   [42] = {
+    ["line"] = 13,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 15,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [43] = {
+    ["line"] = 13,
+    ["raw"] = "1",
+    ["value"] = 1,
     ["type"] = "NUMBER",
     ["col"] = 13,
-    ["line"] = 15,
-    ["value"] = 1,
-    ["raw"] = "1",
   },
   [44] = {
+    ["line"] = 13,
+    ["raw"] = "<<",
+    ["value"] = "<<",
     ["type"] = "SHL",
     ["col"] = 15,
-    ["line"] = 15,
-    ["value"] = "<<",
-    ["raw"] = "<<",
   },
   [45] = {
+    ["line"] = 13,
+    ["raw"] = "3",
+    ["value"] = 3,
     ["type"] = "NUMBER",
     ["col"] = 18,
-    ["line"] = 15,
-    ["value"] = 3,
-    ["raw"] = "3",
   },
   [46] = {
+    ["line"] = 14,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 16,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [47] = {
+    ["line"] = 14,
+    ["raw"] = "shr",
+    ["value"] = "shr",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 16,
-    ["value"] = "shr",
-    ["raw"] = "shr",
   },
   [48] = {
+    ["line"] = 14,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 16,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [49] = {
+    ["line"] = 14,
+    ["raw"] = "0x80",
+    ["value"] = 128,
     ["type"] = "NUMBER",
     ["col"] = 13,
-    ["line"] = 16,
-    ["value"] = 128,
-    ["raw"] = "0x80",
   },
   [50] = {
+    ["line"] = 14,
+    ["raw"] = ">>",
+    ["value"] = ">>",
     ["type"] = "SHR",
     ["col"] = 18,
-    ["line"] = 16,
-    ["value"] = ">>",
-    ["raw"] = ">>",
   },
   [51] = {
+    ["line"] = 14,
+    ["raw"] = "3",
+    ["value"] = 3,
     ["type"] = "NUMBER",
     ["col"] = 21,
-    ["line"] = 16,
-    ["value"] = 3,
-    ["raw"] = "3",
   },
   [52] = {
+    ["line"] = 16,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 19,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [53] = {
+    ["line"] = 16,
+    ["raw"] = "idiv",
+    ["value"] = "idiv",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 19,
-    ["value"] = "idiv",
-    ["raw"] = "idiv",
   },
   [54] = {
+    ["line"] = 16,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 12,
-    ["line"] = 19,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [55] = {
+    ["line"] = 16,
+    ["raw"] = "10",
+    ["value"] = 10,
     ["type"] = "NUMBER",
     ["col"] = 14,
-    ["line"] = 19,
-    ["value"] = 10,
-    ["raw"] = "10",
   },
   [56] = {
+    ["line"] = 16,
+    ["raw"] = "//",
+    ["value"] = "//",
     ["type"] = "IDIV",
     ["col"] = 17,
-    ["line"] = 19,
-    ["value"] = "//",
-    ["raw"] = "//",
   },
   [57] = {
+    ["line"] = 16,
+    ["raw"] = "3",
+    ["value"] = 3,
     ["type"] = "NUMBER",
     ["col"] = 20,
-    ["line"] = 19,
-    ["value"] = 3,
-    ["raw"] = "3",
   },
   [58] = {
+    ["line"] = 18,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 22,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [59] = {
+    ["line"] = 18,
+    ["raw"] = "function",
+    ["value"] = "function",
     ["type"] = "KEYWORD",
     ["col"] = 7,
-    ["line"] = 22,
-    ["value"] = "function",
-    ["raw"] = "function",
   },
   [60] = {
+    ["line"] = 18,
+    ["raw"] = "bitwise_ops",
+    ["value"] = "bitwise_ops",
     ["type"] = "IDENTIFIER",
     ["col"] = 16,
-    ["line"] = 22,
-    ["value"] = "bitwise_ops",
-    ["raw"] = "bitwise_ops",
   },
   [61] = {
+    ["line"] = 18,
+    ["raw"] = "(",
+    ["value"] = "(",
     ["type"] = "LPAREN",
     ["col"] = 27,
-    ["line"] = 22,
-    ["value"] = "(",
-    ["raw"] = "(",
   },
   [62] = {
+    ["line"] = 18,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 28,
-    ["line"] = 22,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [63] = {
+    ["line"] = 18,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 29,
-    ["line"] = 22,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [64] = {
+    ["line"] = 18,
+    ["raw"] = "b",
+    ["value"] = "b",
     ["type"] = "IDENTIFIER",
     ["col"] = 31,
-    ["line"] = 22,
-    ["value"] = "b",
-    ["raw"] = "b",
   },
   [65] = {
+    ["line"] = 18,
+    ["raw"] = ")",
+    ["value"] = ")",
     ["type"] = "RPAREN",
     ["col"] = 32,
-    ["line"] = 22,
-    ["value"] = ")",
-    ["raw"] = ")",
   },
   [66] = {
+    ["line"] = 19,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 5,
-    ["line"] = 23,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [67] = {
+    ["line"] = 19,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 11,
-    ["line"] = 23,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [68] = {
+    ["line"] = 19,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 19,
-    ["line"] = 23,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [69] = {
+    ["line"] = 19,
+    ["raw"] = "{",
+    ["value"] = "{",
     ["type"] = "LBRACE",
     ["col"] = 21,
-    ["line"] = 23,
-    ["value"] = "{",
-    ["raw"] = "{",
   },
   [70] = {
+    ["line"] = 19,
+    ["raw"] = "}",
+    ["value"] = "}",
     ["type"] = "RBRACE",
     ["col"] = 22,
-    ["line"] = 23,
-    ["value"] = "}",
-    ["raw"] = "}",
   },
   [71] = {
+    ["line"] = 20,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 24,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [72] = {
+    ["line"] = 20,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 24,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [73] = {
+    ["line"] = 20,
+    ["raw"] = "band",
+    ["value"] = "band",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 24,
-    ["value"] = "band",
-    ["raw"] = "band",
   },
   [74] = {
+    ["line"] = 20,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 18,
-    ["line"] = 24,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [75] = {
+    ["line"] = 20,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 20,
-    ["line"] = 24,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [76] = {
+    ["line"] = 20,
+    ["raw"] = "&",
+    ["value"] = "&",
     ["type"] = "BAND",
     ["col"] = 22,
-    ["line"] = 24,
-    ["value"] = "&",
-    ["raw"] = "&",
   },
   [77] = {
+    ["line"] = 20,
+    ["raw"] = "b",
+    ["value"] = "b",
     ["type"] = "IDENTIFIER",
     ["col"] = 24,
-    ["line"] = 24,
-    ["value"] = "b",
-    ["raw"] = "b",
   },
   [78] = {
+    ["line"] = 21,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 25,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [79] = {
+    ["line"] = 21,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 25,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [80] = {
+    ["line"] = 21,
+    ["raw"] = "bor",
+    ["value"] = "bor",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 25,
-    ["value"] = "bor",
-    ["raw"] = "bor",
   },
   [81] = {
+    ["line"] = 21,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 17,
-    ["line"] = 25,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [82] = {
+    ["line"] = 21,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 19,
-    ["line"] = 25,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [83] = {
+    ["line"] = 21,
+    ["raw"] = "|",
+    ["value"] = "|",
     ["type"] = "BOR",
     ["col"] = 21,
-    ["line"] = 25,
-    ["value"] = "|",
-    ["raw"] = "|",
   },
   [84] = {
+    ["line"] = 21,
+    ["raw"] = "b",
+    ["value"] = "b",
     ["type"] = "IDENTIFIER",
     ["col"] = 23,
-    ["line"] = 25,
-    ["value"] = "b",
-    ["raw"] = "b",
   },
   [85] = {
+    ["line"] = 22,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 26,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [86] = {
+    ["line"] = 22,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 26,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [87] = {
+    ["line"] = 22,
+    ["raw"] = "bxor",
+    ["value"] = "bxor",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 26,
-    ["value"] = "bxor",
-    ["raw"] = "bxor",
   },
   [88] = {
+    ["line"] = 22,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 18,
-    ["line"] = 26,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [89] = {
+    ["line"] = 22,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 20,
-    ["line"] = 26,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [90] = {
+    ["line"] = 22,
+    ["raw"] = "~",
+    ["value"] = "~",
     ["type"] = "BXOR",
     ["col"] = 22,
-    ["line"] = 26,
-    ["value"] = "~",
-    ["raw"] = "~",
   },
   [91] = {
+    ["line"] = 22,
+    ["raw"] = "b",
+    ["value"] = "b",
     ["type"] = "IDENTIFIER",
     ["col"] = 24,
-    ["line"] = 26,
-    ["value"] = "b",
-    ["raw"] = "b",
   },
   [92] = {
+    ["line"] = 23,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 27,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [93] = {
+    ["line"] = 23,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 27,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [94] = {
+    ["line"] = 23,
+    ["raw"] = "bnot",
+    ["value"] = "bnot",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 27,
-    ["value"] = "bnot",
-    ["raw"] = "bnot",
   },
   [95] = {
+    ["line"] = 23,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 18,
-    ["line"] = 27,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [96] = {
+    ["line"] = 23,
+    ["raw"] = "~",
+    ["value"] = "~",
     ["type"] = "BXOR",
     ["col"] = 20,
-    ["line"] = 27,
-    ["value"] = "~",
-    ["raw"] = "~",
   },
   [97] = {
+    ["line"] = 23,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 21,
-    ["line"] = 27,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [98] = {
+    ["line"] = 24,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 28,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [99] = {
+    ["line"] = 24,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 28,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [100] = {
+    ["line"] = 24,
+    ["raw"] = "shl",
+    ["value"] = "shl",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 28,
-    ["value"] = "shl",
-    ["raw"] = "shl",
   },
   [101] = {
+    ["line"] = 24,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 17,
-    ["line"] = 28,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [102] = {
+    ["line"] = 24,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 19,
-    ["line"] = 28,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [103] = {
+    ["line"] = 24,
+    ["raw"] = "<<",
+    ["value"] = "<<",
     ["type"] = "SHL",
     ["col"] = 21,
-    ["line"] = 28,
-    ["value"] = "<<",
-    ["raw"] = "<<",
   },
   [104] = {
+    ["line"] = 24,
+    ["raw"] = "2",
+    ["value"] = 2,
     ["type"] = "NUMBER",
     ["col"] = 24,
-    ["line"] = 28,
-    ["value"] = 2,
-    ["raw"] = "2",
   },
   [105] = {
+    ["line"] = 25,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 29,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [106] = {
+    ["line"] = 25,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 29,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [107] = {
+    ["line"] = 25,
+    ["raw"] = "shr",
+    ["value"] = "shr",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 29,
-    ["value"] = "shr",
-    ["raw"] = "shr",
   },
   [108] = {
+    ["line"] = 25,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 17,
-    ["line"] = 29,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [109] = {
+    ["line"] = 25,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 19,
-    ["line"] = 29,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [110] = {
+    ["line"] = 25,
+    ["raw"] = ">>",
+    ["value"] = ">>",
     ["type"] = "SHR",
     ["col"] = 21,
-    ["line"] = 29,
-    ["value"] = ">>",
-    ["raw"] = ">>",
   },
   [111] = {
+    ["line"] = 25,
+    ["raw"] = "1",
+    ["value"] = 1,
     ["type"] = "NUMBER",
     ["col"] = 24,
-    ["line"] = 29,
-    ["value"] = 1,
-    ["raw"] = "1",
   },
   [112] = {
+    ["line"] = 26,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 30,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [113] = {
+    ["line"] = 26,
+    ["raw"] = ".",
+    ["value"] = ".",
     ["type"] = "DOT",
     ["col"] = 12,
-    ["line"] = 30,
-    ["value"] = ".",
-    ["raw"] = ".",
   },
   [114] = {
+    ["line"] = 26,
+    ["raw"] = "idiv",
+    ["value"] = "idiv",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 30,
-    ["value"] = "idiv",
-    ["raw"] = "idiv",
   },
   [115] = {
+    ["line"] = 26,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 18,
-    ["line"] = 30,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [116] = {
+    ["line"] = 26,
+    ["raw"] = "a",
+    ["value"] = "a",
     ["type"] = "IDENTIFIER",
     ["col"] = 20,
-    ["line"] = 30,
-    ["value"] = "a",
-    ["raw"] = "a",
   },
   [117] = {
+    ["line"] = 26,
+    ["raw"] = "//",
+    ["value"] = "//",
     ["type"] = "IDIV",
     ["col"] = 22,
-    ["line"] = 30,
-    ["value"] = "//",
-    ["raw"] = "//",
   },
   [118] = {
+    ["line"] = 26,
+    ["raw"] = "b",
+    ["value"] = "b",
     ["type"] = "IDENTIFIER",
     ["col"] = 25,
-    ["line"] = 30,
-    ["value"] = "b",
-    ["raw"] = "b",
   },
   [119] = {
+    ["line"] = 27,
+    ["raw"] = "return",
+    ["value"] = "return",
     ["type"] = "KEYWORD",
     ["col"] = 5,
-    ["line"] = 31,
-    ["value"] = "return",
-    ["raw"] = "return",
   },
   [120] = {
+    ["line"] = 27,
+    ["raw"] = "results",
+    ["value"] = "results",
     ["type"] = "IDENTIFIER",
     ["col"] = 12,
-    ["line"] = 31,
-    ["value"] = "results",
-    ["raw"] = "results",
   },
   [121] = {
+    ["line"] = 28,
+    ["raw"] = "end",
+    ["value"] = "end",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 32,
-    ["value"] = "end",
-    ["raw"] = "end",
   },
   [122] = {
+    ["line"] = 30,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 35,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [123] = {
+    ["line"] = 30,
+    ["raw"] = "complex",
+    ["value"] = "complex",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 35,
-    ["value"] = "complex",
-    ["raw"] = "complex",
   },
   [124] = {
+    ["line"] = 30,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 15,
-    ["line"] = 35,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [125] = {
+    ["line"] = 30,
+    ["raw"] = "(",
+    ["value"] = "(",
     ["type"] = "LPAREN",
     ["col"] = 17,
-    ["line"] = 35,
-    ["value"] = "(",
-    ["raw"] = "(",
   },
   [126] = {
+    ["line"] = 30,
+    ["raw"] = "(",
+    ["value"] = "(",
     ["type"] = "LPAREN",
     ["col"] = 18,
-    ["line"] = 35,
-    ["value"] = "(",
-    ["raw"] = "(",
   },
   [127] = {
+    ["line"] = 30,
+    ["raw"] = "0xFF",
+    ["value"] = 255,
     ["type"] = "NUMBER",
     ["col"] = 19,
-    ["line"] = 35,
-    ["value"] = 255,
-    ["raw"] = "0xFF",
   },
   [128] = {
+    ["line"] = 30,
+    ["raw"] = "&",
+    ["value"] = "&",
     ["type"] = "BAND",
     ["col"] = 24,
-    ["line"] = 35,
-    ["value"] = "&",
-    ["raw"] = "&",
   },
   [129] = {
+    ["line"] = 30,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 26,
-    ["line"] = 35,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [130] = {
+    ["line"] = 30,
+    ["raw"] = ")",
+    ["value"] = ")",
     ["type"] = "RPAREN",
     ["col"] = 30,
-    ["line"] = 35,
-    ["value"] = ")",
-    ["raw"] = ")",
   },
   [131] = {
+    ["line"] = 30,
+    ["raw"] = "<<",
+    ["value"] = "<<",
     ["type"] = "SHL",
     ["col"] = 32,
-    ["line"] = 35,
-    ["value"] = "<<",
-    ["raw"] = "<<",
   },
   [132] = {
+    ["line"] = 30,
+    ["raw"] = "2",
+    ["value"] = 2,
     ["type"] = "NUMBER",
     ["col"] = 35,
-    ["line"] = 35,
-    ["value"] = 2,
-    ["raw"] = "2",
   },
   [133] = {
+    ["line"] = 30,
+    ["raw"] = ")",
+    ["value"] = ")",
     ["type"] = "RPAREN",
     ["col"] = 36,
-    ["line"] = 35,
-    ["value"] = ")",
-    ["raw"] = ")",
   },
   [134] = {
+    ["line"] = 30,
+    ["raw"] = "|",
+    ["value"] = "|",
     ["type"] = "BOR",
     ["col"] = 38,
-    ["line"] = 35,
-    ["value"] = "|",
-    ["raw"] = "|",
   },
   [135] = {
+    ["line"] = 30,
+    ["raw"] = "(",
+    ["value"] = "(",
     ["type"] = "LPAREN",
     ["col"] = 40,
-    ["line"] = 35,
-    ["value"] = "(",
-    ["raw"] = "(",
   },
   [136] = {
+    ["line"] = 30,
+    ["raw"] = "(",
+    ["value"] = "(",
     ["type"] = "LPAREN",
     ["col"] = 41,
-    ["line"] = 35,
-    ["value"] = "(",
-    ["raw"] = "(",
   },
   [137] = {
+    ["line"] = 30,
+    ["raw"] = "0xF0",
+    ["value"] = 240,
     ["type"] = "NUMBER",
     ["col"] = 42,
-    ["line"] = 35,
-    ["value"] = 240,
-    ["raw"] = "0xF0",
   },
   [138] = {
+    ["line"] = 30,
+    ["raw"] = "&",
+    ["value"] = "&",
     ["type"] = "BAND",
     ["col"] = 47,
-    ["line"] = 35,
-    ["value"] = "&",
-    ["raw"] = "&",
   },
   [139] = {
+    ["line"] = 30,
+    ["raw"] = "0x0F",
+    ["value"] = 15,
     ["type"] = "NUMBER",
     ["col"] = 49,
-    ["line"] = 35,
-    ["value"] = 15,
-    ["raw"] = "0x0F",
   },
   [140] = {
+    ["line"] = 30,
+    ["raw"] = ")",
+    ["value"] = ")",
     ["type"] = "RPAREN",
     ["col"] = 53,
-    ["line"] = 35,
-    ["value"] = ")",
-    ["raw"] = ")",
   },
   [141] = {
+    ["line"] = 30,
+    ["raw"] = ">>",
+    ["value"] = ">>",
     ["type"] = "SHR",
     ["col"] = 55,
-    ["line"] = 35,
-    ["value"] = ">>",
-    ["raw"] = ">>",
   },
   [142] = {
+    ["line"] = 30,
+    ["raw"] = "1",
+    ["value"] = 1,
     ["type"] = "NUMBER",
     ["col"] = 58,
-    ["line"] = 35,
-    ["value"] = 1,
-    ["raw"] = "1",
   },
   [143] = {
+    ["line"] = 30,
+    ["raw"] = ")",
+    ["value"] = ")",
     ["type"] = "RPAREN",
     ["col"] = 59,
-    ["line"] = 35,
-    ["value"] = ")",
-    ["raw"] = ")",
   },
   [144] = {
+    ["line"] = 32,
+    ["raw"] = "local",
+    ["value"] = "local",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 38,
-    ["value"] = "local",
-    ["raw"] = "local",
   },
   [145] = {
+    ["line"] = 32,
+    ["raw"] = "pi_hex",
+    ["value"] = "pi_hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 7,
-    ["line"] = 38,
-    ["value"] = "pi_hex",
-    ["raw"] = "pi_hex",
   },
   [146] = {
+    ["line"] = 32,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 14,
-    ["line"] = 38,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [147] = {
+    ["line"] = 32,
+    ["raw"] = "0x1.921fb54442d18p+1",
+    ["value"] = 3.1415926535898,
     ["type"] = "NUMBER",
     ["col"] = 16,
-    ["line"] = 38,
-    ["value"] = 3.1415926535898,
-    ["raw"] = "0x1.921fb54442d18p+1",
   },
   [148] = {
+    ["line"] = 34,
+    ["raw"] = "return",
+    ["value"] = "return",
     ["type"] = "KEYWORD",
     ["col"] = 1,
-    ["line"] = 41,
-    ["value"] = "return",
-    ["raw"] = "return",
   },
   [149] = {
+    ["line"] = 34,
+    ["raw"] = "{",
+    ["value"] = "{",
     ["type"] = "LBRACE",
     ["col"] = 8,
-    ["line"] = 41,
-    ["value"] = "{",
-    ["raw"] = "{",
   },
   [150] = {
+    ["line"] = 35,
+    ["raw"] = "num",
+    ["value"] = "num",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 42,
-    ["value"] = "num",
-    ["raw"] = "num",
   },
   [151] = {
+    ["line"] = 35,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 9,
-    ["line"] = 42,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [152] = {
+    ["line"] = 35,
+    ["raw"] = "num",
+    ["value"] = "num",
     ["type"] = "IDENTIFIER",
     ["col"] = 11,
-    ["line"] = 42,
-    ["value"] = "num",
-    ["raw"] = "num",
   },
   [153] = {
+    ["line"] = 35,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 14,
-    ["line"] = 42,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [154] = {
+    ["line"] = 36,
+    ["raw"] = "float",
+    ["value"] = "float",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 43,
-    ["value"] = "float",
-    ["raw"] = "float",
   },
   [155] = {
+    ["line"] = 36,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 11,
-    ["line"] = 43,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [156] = {
+    ["line"] = 36,
+    ["raw"] = "float",
+    ["value"] = "float",
     ["type"] = "IDENTIFIER",
     ["col"] = 13,
-    ["line"] = 43,
-    ["value"] = "float",
-    ["raw"] = "float",
   },
   [157] = {
+    ["line"] = 36,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 18,
-    ["line"] = 43,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [158] = {
+    ["line"] = 37,
+    ["raw"] = "hex",
+    ["value"] = "hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 44,
-    ["value"] = "hex",
-    ["raw"] = "hex",
   },
   [159] = {
+    ["line"] = 37,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 9,
-    ["line"] = 44,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [160] = {
+    ["line"] = 37,
+    ["raw"] = "hex",
+    ["value"] = "hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 11,
-    ["line"] = 44,
-    ["value"] = "hex",
-    ["raw"] = "hex",
   },
   [161] = {
+    ["line"] = 37,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 14,
-    ["line"] = 44,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [162] = {
+    ["line"] = 38,
+    ["raw"] = "hex_float",
+    ["value"] = "hex_float",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 45,
-    ["value"] = "hex_float",
-    ["raw"] = "hex_float",
   },
   [163] = {
+    ["line"] = 38,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 15,
-    ["line"] = 45,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [164] = {
+    ["line"] = 38,
+    ["raw"] = "hex_float",
+    ["value"] = "hex_float",
     ["type"] = "IDENTIFIER",
     ["col"] = 17,
-    ["line"] = 45,
-    ["value"] = "hex_float",
-    ["raw"] = "hex_float",
   },
   [165] = {
+    ["line"] = 38,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 26,
-    ["line"] = 45,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [166] = {
+    ["line"] = 39,
+    ["raw"] = "pi_hex",
+    ["value"] = "pi_hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 46,
-    ["value"] = "pi_hex",
-    ["raw"] = "pi_hex",
   },
   [167] = {
+    ["line"] = 39,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 12,
-    ["line"] = 46,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [168] = {
+    ["line"] = 39,
+    ["raw"] = "pi_hex",
+    ["value"] = "pi_hex",
     ["type"] = "IDENTIFIER",
     ["col"] = 14,
-    ["line"] = 46,
-    ["value"] = "pi_hex",
-    ["raw"] = "pi_hex",
   },
   [169] = {
+    ["line"] = 39,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 20,
-    ["line"] = 46,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [170] = {
+    ["line"] = 40,
+    ["raw"] = "bitwise",
+    ["value"] = "bitwise",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 47,
-    ["value"] = "bitwise",
-    ["raw"] = "bitwise",
   },
   [171] = {
+    ["line"] = 40,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 47,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [172] = {
+    ["line"] = 40,
+    ["raw"] = "{",
+    ["value"] = "{",
     ["type"] = "LBRACE",
     ["col"] = 15,
-    ["line"] = 47,
-    ["value"] = "{",
-    ["raw"] = "{",
   },
   [173] = {
+    ["line"] = 41,
+    ["raw"] = "band",
+    ["value"] = "band",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 48,
-    ["value"] = "band",
-    ["raw"] = "band",
   },
   [174] = {
+    ["line"] = 41,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 14,
-    ["line"] = 48,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [175] = {
+    ["line"] = 41,
+    ["raw"] = "band",
+    ["value"] = "band",
     ["type"] = "IDENTIFIER",
     ["col"] = 16,
-    ["line"] = 48,
-    ["value"] = "band",
-    ["raw"] = "band",
   },
   [176] = {
+    ["line"] = 41,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 20,
-    ["line"] = 48,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [177] = {
+    ["line"] = 42,
+    ["raw"] = "bor",
+    ["value"] = "bor",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 49,
-    ["value"] = "bor",
-    ["raw"] = "bor",
   },
   [178] = {
+    ["line"] = 42,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 49,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [179] = {
+    ["line"] = 42,
+    ["raw"] = "bor",
+    ["value"] = "bor",
     ["type"] = "IDENTIFIER",
     ["col"] = 15,
-    ["line"] = 49,
-    ["value"] = "bor",
-    ["raw"] = "bor",
   },
   [180] = {
+    ["line"] = 42,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 18,
-    ["line"] = 49,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [181] = {
+    ["line"] = 43,
+    ["raw"] = "bxor",
+    ["value"] = "bxor",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 50,
-    ["value"] = "bxor",
-    ["raw"] = "bxor",
   },
   [182] = {
+    ["line"] = 43,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 14,
-    ["line"] = 50,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [183] = {
+    ["line"] = 43,
+    ["raw"] = "bxor",
+    ["value"] = "bxor",
     ["type"] = "IDENTIFIER",
     ["col"] = 16,
-    ["line"] = 50,
-    ["value"] = "bxor",
-    ["raw"] = "bxor",
   },
   [184] = {
+    ["line"] = 43,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 20,
-    ["line"] = 50,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [185] = {
+    ["line"] = 44,
+    ["raw"] = "bnot",
+    ["value"] = "bnot",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 51,
-    ["value"] = "bnot",
-    ["raw"] = "bnot",
   },
   [186] = {
+    ["line"] = 44,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 14,
-    ["line"] = 51,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [187] = {
+    ["line"] = 44,
+    ["raw"] = "bnot",
+    ["value"] = "bnot",
     ["type"] = "IDENTIFIER",
     ["col"] = 16,
-    ["line"] = 51,
-    ["value"] = "bnot",
-    ["raw"] = "bnot",
   },
   [188] = {
+    ["line"] = 44,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 20,
-    ["line"] = 51,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [189] = {
+    ["line"] = 45,
+    ["raw"] = "shl",
+    ["value"] = "shl",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 52,
-    ["value"] = "shl",
-    ["raw"] = "shl",
   },
   [190] = {
+    ["line"] = 45,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 52,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [191] = {
+    ["line"] = 45,
+    ["raw"] = "shl",
+    ["value"] = "shl",
     ["type"] = "IDENTIFIER",
     ["col"] = 15,
-    ["line"] = 52,
-    ["value"] = "shl",
-    ["raw"] = "shl",
   },
   [192] = {
+    ["line"] = 45,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 18,
-    ["line"] = 52,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [193] = {
+    ["line"] = 46,
+    ["raw"] = "shr",
+    ["value"] = "shr",
     ["type"] = "IDENTIFIER",
     ["col"] = 9,
-    ["line"] = 53,
-    ["value"] = "shr",
-    ["raw"] = "shr",
   },
   [194] = {
+    ["line"] = 46,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 53,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [195] = {
+    ["line"] = 46,
+    ["raw"] = "shr",
+    ["value"] = "shr",
     ["type"] = "IDENTIFIER",
     ["col"] = 15,
-    ["line"] = 53,
-    ["value"] = "shr",
-    ["raw"] = "shr",
   },
   [196] = {
+    ["line"] = 47,
+    ["raw"] = "}",
+    ["value"] = "}",
     ["type"] = "RBRACE",
     ["col"] = 5,
-    ["line"] = 54,
-    ["value"] = "}",
-    ["raw"] = "}",
   },
   [197] = {
+    ["line"] = 47,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 6,
-    ["line"] = 54,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [198] = {
+    ["line"] = 48,
+    ["raw"] = "idiv",
+    ["value"] = "idiv",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 55,
-    ["value"] = "idiv",
-    ["raw"] = "idiv",
   },
   [199] = {
+    ["line"] = 48,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 10,
-    ["line"] = 55,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [200] = {
+    ["line"] = 48,
+    ["raw"] = "idiv",
+    ["value"] = "idiv",
     ["type"] = "IDENTIFIER",
     ["col"] = 12,
-    ["line"] = 55,
-    ["value"] = "idiv",
-    ["raw"] = "idiv",
   },
   [201] = {
+    ["line"] = 48,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 16,
-    ["line"] = 55,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [202] = {
+    ["line"] = 49,
+    ["raw"] = "complex",
+    ["value"] = "complex",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 56,
-    ["value"] = "complex",
-    ["raw"] = "complex",
   },
   [203] = {
+    ["line"] = 49,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 13,
-    ["line"] = 56,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [204] = {
+    ["line"] = 49,
+    ["raw"] = "complex",
+    ["value"] = "complex",
     ["type"] = "IDENTIFIER",
     ["col"] = 15,
-    ["line"] = 56,
-    ["value"] = "complex",
-    ["raw"] = "complex",
   },
   [205] = {
+    ["line"] = 49,
+    ["raw"] = ",",
+    ["value"] = ",",
     ["type"] = "COMMA",
     ["col"] = 22,
-    ["line"] = 56,
-    ["value"] = ",",
-    ["raw"] = ",",
   },
   [206] = {
+    ["line"] = 50,
+    ["raw"] = "lua_version",
+    ["value"] = "lua_version",
     ["type"] = "IDENTIFIER",
     ["col"] = 5,
-    ["line"] = 57,
-    ["value"] = "lua_version",
-    ["raw"] = "lua_version",
   },
   [207] = {
+    ["line"] = 50,
+    ["raw"] = "=",
+    ["value"] = "=",
     ["type"] = "ASSIGN",
     ["col"] = 17,
-    ["line"] = 57,
-    ["value"] = "=",
-    ["raw"] = "=",
   },
   [208] = {
+    ["line"] = 50,
+    ["raw"] = "_VERSION",
+    ["value"] = "_VERSION",
     ["type"] = "IDENTIFIER",
     ["col"] = 19,
-    ["line"] = 57,
-    ["value"] = "_VERSION",
-    ["raw"] = "_VERSION",
   },
   [209] = {
+    ["line"] = 51,
+    ["raw"] = "}",
+    ["value"] = "}",
     ["type"] = "RBRACE",
     ["col"] = 1,
-    ["line"] = 58,
-    ["value"] = "}",
-    ["raw"] = "}",
   },
   [210] = {
+    ["line"] = 52,
+    ["raw"] = "",
+    ["value"] = "",
     ["type"] = "EOF",
     ["col"] = 1,
-    ["line"] = 59,
-    ["value"] = "",
-    ["raw"] = "",
   },
 }
 }

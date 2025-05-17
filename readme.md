@@ -109,7 +109,11 @@ end
 - More robust error recovery strategies
 - Add scope analysis for variables
 - Improved handling of complex expressions
-- Support for comments as part of the AST
+- ✅ Support for comments as part of the AST
+  - Comments are preserved with source location information
+  - Attached to relevant AST nodes based on position
+  - Preserved as leading/trailing associations
+  - Available in both Lua table and JSON output formats
 
 ### AST Nodes Improvements
 - Add source location information to all nodes

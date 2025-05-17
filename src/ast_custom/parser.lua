@@ -13,6 +13,8 @@ local tokens = {}
 local current_token_idx = 1
 local current_token = nil
 local errors = {}
+local comments = {}
+local attached_comments = {}
 
 local parse_identifier, parse_literal, parse_table_constructor
 local parse_member_expression, parse_function_call, parse_method_call
@@ -181,6 +183,91 @@ local function synchronize()
         end
         next_token()
     end
+end
+
+local function attach_comments_to_node(node, leading_comments, trailing_comments)
+    if not node then return end
+    
+    if not node.comments then
+        node.comments = {}
+    end
+    
+    if leading_comments and #leading_comments > 0 then
+        if not node.comments.leading then
+            node.comments.leading = {}
+        end
+        
+        for _, comment in ipairs(leading_comments) do
+            table.insert(node.comments.leading, comment)
+        end
+    end
+    
+    if trailing_comments and #trailing_comments > 0 then
+        if not node.comments.trailing then
+            node.comments.trailing = {}
+        end
+        
+        for _, comment in ipairs(trailing_comments) do
+            table.insert(node.comments.trailing, comment)
+        end
+    end
+end
+
+local function find_comments_before(token_idx)
+    local result = {}
+    
+    for i = 1, #comments do
+        local comment = comments[i]
+        if not attached_comments[i] then
+            local comment_pos = comment.line * 10000 + comment.col
+            local token_pos = tokens[token_idx].line * 10000 + tokens[token_idx].col
+            
+            if comment_pos < token_pos then
+                table.insert(result, comment)
+                attached_comments[i] = true
+            end
+        end
+    end
+    
+    return result
+end
+
+local function find_comments_after(token_idx)
+    local result = {}
+    
+    if token_idx >= #tokens then return result end
+    
+    local this_token = tokens[token_idx]
+    local next_token = tokens[token_idx + 1]
+    
+    for i = 1, #comments do
+        local comment = comments[i]
+        if not attached_comments[i] then
+            local comment_pos = comment.line * 10000 + comment.col
+            local this_token_pos = this_token.line * 10000 + this_token.col
+            local next_token_pos = next_token.line * 10000 + next_token.col
+            
+            if comment_pos > this_token_pos and comment_pos < next_token_pos then
+                if comment.line == this_token.line then
+                    table.insert(result, comment)
+                    attached_comments[i] = true
+                end
+            end
+        end
+    end
+    
+    return result
+end
+
+local function attach_comments(node, start_token_idx, end_token_idx)
+    if not node then return end
+    
+    local leading_comments = find_comments_before(start_token_idx)
+    local trailing_comments = find_comments_after(end_token_idx or start_token_idx)
+    
+    attach_comments_to_node(node, leading_comments, trailing_comments)
+    
+    return node
 end
 
 parse_identifier = function()
@@ -720,6 +807,7 @@ parse_if_statement = function()
         return nil
     end
     
+    local start_token_idx = current_token_idx
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
     local clauses = {}
@@ -771,7 +859,9 @@ parse_if_statement = function()
         consume(lexer.TOKEN_TYPES.KEYWORD)
     end
     
-    return ast_nodes.IfStatement(clauses)
+    local end_token_idx = current_token_idx - 1
+    local node = ast_nodes.IfStatement(clauses)
+    return attach_comments(node, start_token_idx, end_token_idx)
 end
 
 parse_while_statement = function()
@@ -953,6 +1043,8 @@ parse_function_declaration = function()
         return nil
     end
     
+    local start_token_idx = current_token_idx
+    local token_start = current_token
     consume(lexer.TOKEN_TYPES.KEYWORD) 
     
     local isLocal = false
@@ -1036,7 +1128,9 @@ parse_function_declaration = function()
         consume(lexer.TOKEN_TYPES.KEYWORD)
     end
     
-    return ast_nodes.FunctionDeclaration(base, parameters, body, isLocal)
+    local end_token_idx = current_token_idx - 1
+    local node = ast_nodes.FunctionDeclaration(base, parameters, body, isLocal, token_start, current_token)
+    return attach_comments(node, start_token_idx, end_token_idx)
 end
 
 parse_local_function_declaration = function()
@@ -1109,6 +1203,7 @@ parse_local_statement = function()
     end
     
     local token_start = current_token
+    local start_token_idx = current_token_idx
     consume(lexer.TOKEN_TYPES.KEYWORD)
     
     if match(lexer.TOKEN_TYPES.KEYWORD) and current_token.value == "function" then
@@ -1140,7 +1235,9 @@ parse_local_statement = function()
         end
     end
     
-    return ast_nodes.LocalStatement(variables, init, token_start, current_token)
+    local end_token_idx = current_token_idx
+    local node = ast_nodes.LocalStatement(variables, init, token_start, current_token)
+    return attach_comments(node, start_token_idx, end_token_idx)
 end
 
 parse_return_statement = function()
@@ -1275,14 +1372,25 @@ parse_statement = function()
 end
 
 function parser.parse(code)
-    tokens = lexer.tokenize(code)
+    tokens, comments = lexer.tokenize(code)
     current_token_idx = 1
     current_token = tokens[1]
     errors = {}
+    attached_comments = {}
     
     local body = parse_block()
     
-    local ast = ast_nodes.Chunk(body)
+    local ast = ast_nodes.Chunk(body, comments)
+    
+    local unattached_comments = {}
+    for i, comment in ipairs(comments) do
+        if not attached_comments[i] then
+            table.insert(unattached_comments, comment)
+        end
+    end
+    if #unattached_comments > 0 then
+        attach_comments_to_node(ast, unattached_comments, {})
+    end
     
     return ast, errors
 end

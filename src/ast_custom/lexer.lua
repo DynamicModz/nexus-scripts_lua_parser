@@ -51,6 +51,7 @@ lexer.TOKEN_TYPES = {
     ATTR_CLOSE = "ATTR_CLOSE",
     LT_SYMBOL = "LT_SYMBOL",
     GT_SYMBOL = "GT_SYMBOL",
+    COMMENT = "COMMENT",
     EOF = "EOF"
 }
 
@@ -114,23 +115,46 @@ local function skip_whitespace(code, pos, line, col)
     return pos, line, col
 end
 
-local function skip_comments(code, pos, line, col)
+local function parse_comments(code, pos, line, col)
     if pos + 1 <= #code and code:sub(pos, pos + 1) == "--" then
+        local start_pos = pos
+        local start_line = line
+        local start_col = col
+        
         pos = pos + 2
         col = col + 2
+        
+        local comment_text = "--"
+        local is_multiline = false
+        local level = 0
 
         if pos <= #code and code:sub(pos, pos) == "[" then
-            local pos2 = pos + 1
+            pos = pos + 1
+            col = col + 1
+            comment_text = comment_text .. "["
+            
+            local pos2 = pos
             while pos2 <= #code and code:sub(pos2, pos2) == "=" do
                 pos2 = pos2 + 1
             end
+            
             if pos2 <= #code and code:sub(pos2, pos2) == "[" then
-                local level = pos2 - pos - 1
+                level = pos2 - pos
+                is_multiline = true
+                
+                for i = pos, pos2 do
+                    comment_text = comment_text .. code:sub(i, i)
+                end
+                
                 pos = pos2 + 1
-                col = col + level + 2
+                col = col + level + 1
+                comment_text = comment_text .. "["
+                
+                local content_start = pos
                 
                 while pos <= #code do
                     if code:sub(pos, pos) == "\n" then
+                        comment_text = comment_text .. "\n"
                         line = line + 1
                         col = 1
                         pos = pos + 1
@@ -144,57 +168,99 @@ local function skip_comments(code, pos, line, col)
                                 end
                             end
                             if found and code:sub(pos + level + 1, pos + level + 1) == "]" then
+                                comment_text = comment_text .. "]"
+                                for i = 1, level do
+                                    comment_text = comment_text .. "="
+                                end
+                                comment_text = comment_text .. "]"
+                                
                                 pos = pos + level + 2
                                 col = col + level + 2
-                                return pos, line, col, true
+                                
+                                return pos, line, col, lexer.create_token(
+                                    lexer.TOKEN_TYPES.COMMENT, 
+                                    string.sub(comment_text, 3),
+                                    start_line,
+                                    start_col,
+                                    comment_text
+                                ), is_multiline
                             end
                         end
+                        comment_text = comment_text .. code:sub(pos, pos)
                         pos = pos + 1
                         col = col + 1
                     else
+                        comment_text = comment_text .. code:sub(pos, pos)
                         pos = pos + 1
                         col = col + 1
                     end
                 end
-                return pos, line, col, true
+                
+                return pos, line, col, lexer.create_token(
+                    lexer.TOKEN_TYPES.COMMENT, 
+                    string.sub(comment_text, 3),
+                    start_line,
+                    start_col,
+                    comment_text
+                ), is_multiline
             end
         end
 
+        local content_start = pos
         while pos <= #code and code:sub(pos, pos) ~= "\n" and code:sub(pos, pos) ~= "\r" do
+            comment_text = comment_text .. code:sub(pos, pos)
             pos = pos + 1
             col = col + 1
         end
-        return pos, line, col, true
+        
+        return pos, line, col, lexer.create_token(
+            lexer.TOKEN_TYPES.COMMENT, 
+            string.sub(comment_text, 3),
+            start_line,
+            start_col,
+            comment_text
+        ), false
     end
-    return pos, line, col, false
+    return pos, line, col, nil, false
 end
 
 local function process_nested_comments(code, pos, line, col)
     if pos + 1 <= #code and code:sub(pos, pos + 1) == "--" then
+        local start_pos = pos
+        local start_line = line
+        local start_col = col
         pos = pos + 2
         col = col + 2
         
+        local comment_text = "--"
+        local is_multiline = false
+        
         if pos <= #code and code:sub(pos, pos) == "[" then
             local equals_count = 0
-            local start_pos = pos
             pos = pos + 1
             col = col + 1
+            comment_text = comment_text .. "["
             
             while pos <= #code and code:sub(pos, pos) == "=" do
                 equals_count = equals_count + 1
+                comment_text = comment_text .. "="
                 pos = pos + 1
                 col = col + 1
             end
             
             if pos <= #code and code:sub(pos, pos) == "[" then
+                is_multiline = true
+                comment_text = comment_text .. "["
                 pos = pos + 1
                 col = col + 1
                 
                 if pos <= #code and (code:sub(pos, pos) == '\n' or code:sub(pos, pos) == '\r') then
                     if code:sub(pos, pos) == '\r' and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == '\n' then
+                        comment_text = comment_text .. "\r\n"
                         pos = pos + 2
                         col = 1
                     else
+                        comment_text = comment_text .. code:sub(pos, pos)
                         pos = pos + 1
                         col = 1
                     end
@@ -221,25 +287,48 @@ local function process_nested_comments(code, pos, line, col)
                             nesting_level = nesting_level - 1
                             
                             if nesting_level == 0 then
+                                comment_text = comment_text .. "]"
+                                for i = 1, close_equals_count do
+                                    comment_text = comment_text .. "="
+                                end
+                                comment_text = comment_text .. "]"
+                                
                                 pos = close_pos + 1
                                 col = close_col + 1
-                                return pos, line, col, true
+                                
+                                return pos, line, col, lexer.create_token(
+                                    lexer.TOKEN_TYPES.COMMENT, 
+                                    string.sub(comment_text, 3),
+                                    start_line,
+                                    start_col,
+                                    comment_text
+                                ), is_multiline
                             else
+                                comment_text = comment_text .. "]"
+                                for i = 1, close_equals_count do
+                                    comment_text = comment_text .. "="
+                                end
+                                comment_text = comment_text .. "]"
                                 pos = close_pos + 1
                                 col = close_col + 1
                             end
                         else
+                            comment_text = comment_text .. code:sub(pos, pos)
                             pos = pos + 1
                             col = col + 1
                         end
                     elseif pos + 1 <= #code and code:sub(pos, pos + 1) == "--" and 
                            pos + 2 <= #code and code:sub(pos + 2, pos + 2) == "[" then
+                        comment_text = comment_text .. "--["
                         local nested_pos = pos + 3
                         local nested_col = col + 3
                         local nested_equals_count = 0
+                        pos = pos + 3
+                        col = col + 3
                         
                         while nested_pos <= #code and code:sub(nested_pos, nested_pos) == "=" do
                             nested_equals_count = nested_equals_count + 1
+                            comment_text = comment_text .. "="
                             nested_pos = nested_pos + 1
                             nested_col = nested_col + 1
                         end
@@ -247,39 +336,57 @@ local function process_nested_comments(code, pos, line, col)
                         if nested_pos <= #code and code:sub(nested_pos, nested_pos) == "[" then
                             nesting_level = nesting_level + 1
                             table.insert(nesting_stack, nested_equals_count)
+                            comment_text = comment_text .. "["
                             pos = nested_pos + 1
                             col = nested_col + 1
                         else
+                            comment_text = comment_text .. code:sub(pos, pos)
                             pos = pos + 1
                             col = col + 1
                         end
                     elseif code:sub(pos, pos) == "\n" or code:sub(pos, pos) == "\r" then
                         if code:sub(pos, pos) == "\r" and pos + 1 <= #code and code:sub(pos + 1, pos + 1) == "\n" then
+                            comment_text = comment_text .. "\r\n"
                             pos = pos + 2
                         else
+                            comment_text = comment_text .. code:sub(pos, pos)
                             pos = pos + 1
                         end
                         line = line + 1
                         col = 1
                     else
+                        comment_text = comment_text .. code:sub(pos, pos)
                         pos = pos + 1
                         col = col + 1
                     end
                 end
                 
-                return pos, line, col, true
+                return pos, line, col, lexer.create_token(
+                    lexer.TOKEN_TYPES.COMMENT, 
+                    string.sub(comment_text, 3),
+                    start_line,
+                    start_col,
+                    comment_text
+                ), is_multiline
             end
         end
         
         while pos <= #code and code:sub(pos, pos) ~= "\n" and code:sub(pos, pos) ~= "\r" do
+            comment_text = comment_text .. code:sub(pos, pos)
             pos = pos + 1
             col = col + 1
         end
         
-        return pos, line, col, true
+        return pos, line, col, lexer.create_token(
+            lexer.TOKEN_TYPES.COMMENT, 
+            string.sub(comment_text, 3),
+            start_line,
+            start_col,
+            comment_text
+        ), false
     end
     
-    return pos, line, col, false
+    return pos, line, col, nil, false
 end
 
 local function read_identifier(code, pos, line, col)
@@ -639,6 +746,7 @@ function lexer.tokenize(code)
     local line = 1
     local col = 1
     local tokens = {}
+    local comments = {}
     
     while pos <= #code do
         pos, line, col = skip_whitespace(code, pos, line, col)
@@ -647,7 +755,17 @@ function lexer.tokenize(code)
             break
         end
         
-      
+        local old_pos = pos
+        local old_line = line
+        local old_col = col
+        local pos_after_comment, line_after_comment, col_after_comment, comment_token, is_multiline = parse_comments(code, pos, line, col)
+        
+        if comment_token then
+            table.insert(comments, comment_token)
+            pos, line, col = pos_after_comment, line_after_comment, col_after_comment
+            goto continue
+        end
+        
         local old_pos = pos
         local old_line = line
         local old_col = col
@@ -1142,7 +1260,7 @@ function lexer.tokenize(code)
     
     table.insert(tokens, lexer.create_token(lexer.TOKEN_TYPES.EOF, "", line, col, ""))
     
-    return tokens
+    return tokens, comments
 end
 
 return lexer

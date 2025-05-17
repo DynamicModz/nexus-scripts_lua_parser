@@ -25,15 +25,15 @@ local LOGO = [[
 local COMMANDS = {
     parse = {
         desc = "Parse a Lua file and generate AST",
-        usage = "parse <input_file> [output_file] [--format=json|lua] [--output=ast|tokens|both]"
+        usage = "cli.lua parse <input_file> [output_file] [--format=json|lua] [--output=ast|tokens|both]"
     },
     help = {
         desc = "Show help information",
-        usage = "help [command]"
+        usage = "cli.lua help [command]"
     },
     version = {
         desc = "Show version information",
-        usage = "version"
+        usage = "cli.lua version"
     }
 }
 
@@ -359,12 +359,16 @@ local function handle_help(args)
             print_info("      Usage: " .. cmd_info.usage)
         end
         
+        print_info("\nShortcut usage:")
+        print_info("  lua cli.lua <input_file>                      # Directly parse a file with default settings (creates a .lua output file containing both the AST and tokens as Lua tables)")
+        
         print_info("\nExamples:")
-        print_info("  ./NexusScripts parse input.lua                        # Parse and output to input.lua.output.lua")
-        print_info("  ./NexusScripts parse input.lua output.json --format=json    # Parse and output JSON")
-        print_info("  ./NexusScripts parse input.lua --output=tokens              # Output only tokens")
-        print_info("  ./NexusScripts parse input.lua --output=both               # Output both AST and tokens")
-        print_info("  ./NexusScripts parse input.lua output.lua --verbose         # Enable verbose output")
+        print_info("  lua cli.lua parse input.lua                         # Directly parse file with default settings")
+        print_info("  lua cli.lua parse input.lua                   # Parse and output to input.lua.output.lua")
+        print_info("  lua cli.lua parse input.lua output.json --format=json    # Parse and output JSON")
+        print_info("  lua cli.lua parse input.lua --output=tokens             # Output only tokens")
+        print_info("  lua cli.lua parse input.lua --output=both              # Output both AST and tokens")
+        print_info("  lua cli.lua parse input.lua output.lua --verbose        # Enable verbose output")
     else
         local cmd_name = args[1]
         local cmd_info = COMMANDS[cmd_name]
@@ -405,15 +409,22 @@ function cli.run(args)
         return handle_version()
     elseif command == "help" then
         return handle_help(args)
+    elseif file_exists(command) then
+        print_verbose("Detected file path, processing with default settings", verbose)
+        return handle_parse({command}, verbose)
     else
-        print_error("Unknown command: " .. command)
-        print_info("Use 'help' to see available commands")
+        print_error("Unknown command or file not found: " .. command)
+        print_info("Use 'help' to see available commands and usage examples")
         return false
     end
 end
 
 if arg and arg[0] and arg[0]:match("cli.lua$") then
-    local success = cli.run(arg)
+    local args = {}
+    for i = 1, #arg do
+        args[i] = arg[i]
+    end
+    local success = cli.run(args)
     os.exit(success and 0 or 1)
 end
 
